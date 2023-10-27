@@ -22,12 +22,31 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="ProfileView">Profile</a>
-                        </li>
                     </ul>
-                    <!-- Navbar Right could differ if user is authenticated or not -->
-                    @RenderSection("NavbarRight", false);
+                    
+                    @if ((bool)ViewData["IsAuthenticated"])
+                    {
+                        <ul class="navbar-nav flex-grow-2">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="ProfileView">Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Logout">Logout</a>
+                            </li>
+                        </ul>
+                    }
+                    else
+                    {
+                        <ul class="navbar-nav flex-grow-2">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Register">Register</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Login">Login</a>
+                            </li>
+                        </ul>
+                    }
+
                 </div>
             </div>
         </nav>
@@ -40,12 +59,11 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            <a asp-area="" asp-controller="Home" asp-action="Github">Github</a>
+            <a class="footer-item" href="https://github.com/gh-lutheravery">Github Page</a>
+            <a class="footer-item" href="mailto:lutheravery64@gmail.com" title="contact@lutheravery64@gmail.com">Contact</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
