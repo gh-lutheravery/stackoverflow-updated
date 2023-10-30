@@ -1,0 +1,34 @@
+﻿@model RegisterViewModel
+
+
+<div class="content-section ml-auto mr-auto mt-3">
+    <img class="large-logo ml-auto mr-auto" src="~/web-logo.png"/>
+    <h1><b>Login</b></h1>
+    @using (Html.BeginForm("Login", "User", FormMethod.Post, new { @autocomplete = "off" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            @Html.LabelFor(m => m.Email, "Email")
+            @Html.TextBoxFor(m => m.Email, "", new { @class = "form-control form-control-lg", 
+                @type = "text", @placeholder = "Email" 
+            })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Password, "Password")
+            @Html.TextBoxFor(m => m.Password, "", new { @class = "form-control form-control-lg", 
+                @type = "text", @placeholder = "Password" 
+            })
+        </div>
+
+        <div class="form-group m-auto">
+            <input type="submit" name="submit" class="btn btn-outline-info" value="Login" />
+        </div>
+    }
+
+    <div class="border-top pt-3">
+        <small class="text-muted">
+            Don't have an account? @Html.ActionLink("Sign in here", "Register", "User", htmlAttributes: new TModel{ @class="ml-2" })
+        </small>
+    </div>
+</div>
