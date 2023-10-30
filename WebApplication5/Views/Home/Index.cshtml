@@ -1,6 +1,74 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@model IndexViewModel
+
+
+<div class="row align-items-start">
+    <div class="d-flex justify-content-between">
+        <h1>All Questions</h1>
+        @Html.Partial("~/Views/Shared/AskQuestion.cshtml")
+    </div>
+    
+    <div class="row align-items-start">
+        <div class="col">
+          Sort by Newest
+        </div>
+        <div class="col">
+          Sort by Unanswered
+        </div>
+        <div class="col">
+          <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+            Filter
+          </a>
+
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <li><a class="dropdown-item" href="#">Action</a></li>
+            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+          </ul>
+        </div>
+    </div>
+
+    <div class="col">
+        @{
+            foreach (var question in Model.Questions)
+            {
+                <div class="media">
+                  <div class="d-flex flex-column">
+                      <div class="p-2">@Model.ViewCount Views</div>
+                      <div class="p-2">@Model.VoteCount Votes</div>
+                  </div>
+                  <div class="media-body">
+                    <h5 class="mt-0">@Model.Title</h5>
+                    @Model.TruncatedContent
+                    <div class="d-flex justify-content-between prevent-overflow">
+                        foreach (var tag in question.tags)
+                        {
+                            <div class="badge bg-blue">@tag</div>
+                        }
+                    </div>
+                  </div>
+                </div>
+            }
+        }
+    </div>
+
+    <div class="col">
+        <h1>Random Tags</h1>
+        <ul>
+            @{
+                foreach (var tag in Model.RandomTags)
+                {
+                    <li class="badge rounded-pill bg-blue">
+                        @tag.Name
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
