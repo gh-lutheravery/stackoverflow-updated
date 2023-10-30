@@ -1,0 +1,66 @@
+﻿@model QuestionAnswerModel
+
+@Html.Partial("~/Views/Shared/AskQuestion.cshtml")
+<article class="media content-section mb-5">
+    <div class="d-flex flex-column">
+        <span class="sprite vote"></span>
+        <span class="vote-count">@Model.VoteCount</span>
+        <span class="sprite vote"></span>
+    </div>
+
+    <div class="media-body">
+        <h2 class="article-title">{{ object.title }}</h2>
+        <p class="article-content">{{ object.content }}</p>
+
+        <div class="row align-items-start">
+            foreach (var tag in question.tags)
+            {
+                <div class="col badge bg-blue">@tag</div>
+            }
+        </div>
+
+        <div class="article-metadata">
+            <img class="rounded-circle author-img mr-0" src="{{ object.author.profile.img.url }}">
+            <a class="mr-2" href="#">{{ object.author }}</a>
+            <small class="text-muted ml-auto">{{ object.date_posted|date:"F d, Y, P" }}</small>
+        </div>
+    </div>
+    {% if object.author == user %}
+    <div>
+        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Update</a>
+        <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+    </div>
+    {% endif %}
+</article>
+
+<h2 class="article-title">@Model.Answers.Count Answers</h2>
+
+@{
+    foreach (var ans in @Model.Answers)
+    {
+        <article class="media content-section mb-5">
+            <div class="d-flex flex-column">
+                <span class="sprite vote"></span>
+                <span class="vote-count">@Model.VoteCount</span>
+                <span class="sprite vote"></span>
+            </div>
+
+            <div class="media-body">
+                <h2 class="article-title">{{ object.title }}</h2>
+                <p class="article-content">{{ object.content }}</p>
+
+                <div class="article-metadata">
+                    <img class="rounded-circle author-img mr-0" src="{{ object.author.profile.img.url }}">
+                    <a class="mr-2" href="#">{{ object.author }}</a>
+                    <small class="text-muted ml-auto">{{ object.date_posted|date:"F d, Y, P" }}</small>
+                </div>
+            </div>
+            {% if object.author == user %}
+            <div>
+                <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Update</a>
+                <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+            </div>
+            {% endif %}
+        </article>
+    }
+}
