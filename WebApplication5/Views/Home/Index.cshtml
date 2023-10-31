@@ -36,14 +36,14 @@
             {
                 <div class="media">
                   <div class="d-flex flex-column">
-                      <div class="p-2">@Model.ViewCount Views</div>
-                      <div class="p-2">@Model.VoteCount Votes</div>
+                      <div class="p-2">@question.ViewCount Views</div>
+                      <div class="p-2">@question.VoteCount Votes</div>
                   </div>
                   <div class="media-body">
-                    <h5 class="mt-0">@Model.Title</h5>
-                    @Model.TruncatedContent
+                    <h5 class="mt-0">@question.Title</h5>
+                    @question.TruncatedContent
                     <div class="d-flex justify-content-between prevent-overflow">
-                        foreach (var tag in question.tags)
+                        foreach (var tag in @question.tags)
                         {
                             <div class="badge bg-blue">@tag</div>
                         }
