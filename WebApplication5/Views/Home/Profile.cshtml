@@ -1,0 +1,49 @@
+﻿@model ProfileViewModel
+
+
+<div class="row">
+    <div class="col-6">
+        @{
+            foreach (var question in Model.Questions)
+            {
+                <div class="media">
+                    <div class="d-flex flex-column">
+                        <div class="p-2">@question.ViewCount Views</div>
+                        <div class="p-2">@question.VoteCount Votes</div>
+                    </div>
+                    <div class="media-body">
+                    <h5 class="mt-0">@question.Title</h5>
+                    @question.TruncatedContent
+                    <div class="d-flex justify-content-between prevent-overflow">
+                        foreach (var tag in @question.tags)
+                        {
+                            <div class="badge bg-blue">@tag</div>
+                        }
+                    </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    
+    <div class="col-4">
+        <div class="card">
+            <img class="card-img-top" src="@Model.PicturePath" alt="Profile Picture">
+            <div class="card-body">
+                <div class="d-flex">
+                    <h5 class="card-title">@Model.Username</h5>
+                    <h6 class="card-title text-muted">@Model.Email</h6>
+                    @if (HttpContext.Current.User == Model.User)
+                    {
+                        <a class="btn btn-dark" asp-area="" asp-controller="User" asp-action="Update">Update</a>
+                    }
+                </div>
+                
+                <p class="card-text">@Model.Bio</p>
+                <p class="card-text"><small class="text-muted">@Model.JoinDate.ToString()</small></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
