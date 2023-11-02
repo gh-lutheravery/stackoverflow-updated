@@ -3,9 +3,10 @@
 @Html.Partial("~/Views/Shared/AskQuestion.cshtml")
 <article class="media content-section mb-5">
     <div class="d-flex flex-column">
-        <span class="sprite vote"></span>
-        <span class="vote-count">@Model.VoteCount</span>
-        <span class="sprite vote"></span>
+        <!-- use bootstrap icons here -->
+        <span class="up-sprite vote"></span>
+        <span class="vote-count">@Model.Question.VoteCount</span>
+        <span class="down-sprite vote"></span>
     </div>
 
     <div class="media-body">
@@ -13,7 +14,7 @@
         <p class="article-content">{{ object.content }}</p>
 
         <div class="row align-items-start">
-            foreach (var tag in question.tags)
+            @foreach (var tag in Model.Question.tags)
             {
                 <div class="col badge bg-blue">@tag</div>
             }
@@ -27,7 +28,7 @@
     </div>
     {% if object.author == user %}
     <div>
-        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Update</a>
+        @Html.ActionLink("Update", "Update", "Question", new { @QuestionId = Model.Question.Id })
         <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
     </div>
     {% endif %}
@@ -57,7 +58,7 @@
             </div>
             {% if object.author == user %}
             <div>
-                <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Update</a>
+                @Html.ActionLink("Update", "Update", "Answer", new { @AnswerId = ans.Id })
                 <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
             </div>
             {% endif %}
