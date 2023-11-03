@@ -1,12 +1,18 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
-@model IndexViewModel
+﻿﻿@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@using X.PagedList.Web.Common;
 
+
+@{
+    ViewData["Title"] = "All Questions";
+}
+
+
+@model IndexViewModel
 
 <div class="row align-items-start">
     <div class="d-flex justify-content-between">
-        <h1>All Questions</h1>
+        <h1>@Model.QuestionsTitle</h1>
         @Html.Partial("~/Views/Shared/AskQuestion.cshtml")
     </div>
     
@@ -18,43 +24,59 @@
           Sort by Unanswered
         </div>
         <div class="col">
-          <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-            Filter
-          </a>
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                Filter by
+            </a>
 
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                @Html.ActionLink("No answers", "Index", "Home", htmlAttributes: { @class="dropdown-item" }, routeValues: { filter="NoAnswers" })
+                @Html.ActionLink("No accepted answers", "Index", "Home", htmlAttributes: { @class="dropdown-item" }, routeValues: { filter="NoAcceptedAnswers" })
+                <li>
+                    <br />
+                    <p class="dropdown-item-text">Tags</p>
+                    @using (Html.BeginForm("IndexFilterByTag", "Home", FormMethod.Get))
+                    {
+                        <input class="dropdown-item" name="tagify" id="TagQuery" value="@Model.TagsStr" autofocus>
+                    }
+                </li>
+            </ul>
         </div>
     </div>
 
-    <div class="col">
+    <div class="col-7">
         @{
             foreach (var question in Model.Questions)
             {
                 <div class="media">
-                  <div class="d-flex flex-column">
-                      <div class="p-2">@question.ViewCount Views</div>
-                      <div class="p-2">@question.VoteCount Votes</div>
-                  </div>
-                  <div class="media-body">
-                    <h5 class="mt-0">@question.Title</h5>
-                    @question.TruncatedContent
-                    <div class="d-flex justify-content-between prevent-overflow">
-                        foreach (var tag in @question.tags)
-                        {
-                            <div class="badge bg-blue">@tag</div>
-                        }
+                    <div class="d-flex flex-column">
+                        <div class="p-2">@question.ViewCount Views</div>
+                        <div class="p-2">@question.VoteCount Votes</div>
                     </div>
-                  </div>
+                    <div class="media-body">
+                        <h5 class="mt-0">@question.Title</h5>
+                        @question.TruncatedContent
+                        <div class="d-flex justify-content-between prevent-overflow">
+                            foreach (var tag in @question.tags)
+                            {
+                                <span class="badge bg-blue">@tag</span>
+                            }
+                        </div>
+                    </div>
                 </div>
             }
         }
+
+        @Html.PagedListPager(Model.Questions, page => Url.Action("Index", "Home", new { page = page }),
+        new PagedListRenderOptions
+        {
+            DisplayItemSliceAndTotal = false,
+            ContainerDivClasses = new [] { "navigation" },
+            LiElementClasses = new string[] { "page-item" }, 
+            PageClasses = new string[] { "page-link" } 
+        })
     </div>
 
-    <div class="col">
+    <div class="col-3">
         <h1>Random Tags</h1>
         <ul>
             @{
@@ -70,7 +92,14 @@
 </div>
 
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@section Scripts 
+{
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+
+    <script>
+        var tagInput = document.getElementById('input[name=tagify]');
+
+        // initialize Tagify for tag filter
+        new Tagify(tagInput);
+    </script>
+}
