@@ -1,37 +1,46 @@
 ﻿@model QuestionAnswerModel
 
-@Html.Partial("~/Views/Shared/AskQuestion.cshtml")
+@Html.Partial("~/Views/Shared/_AskQuestion.cshtml")
 <article class="media content-section mb-5">
     <div class="d-flex flex-column">
-        <!-- use bootstrap icons here -->
-        <span class="up-sprite vote"></span>
+        <!-- use bootstrap icons for up/down arrows -->
+        <span class="vote">
+            <i class="bi bi-arrow-up-circle-fill"></i>
+        </span>
         <span class="vote-count">@Model.Question.VoteCount</span>
-        <span class="down-sprite vote"></span>
+        <span class="vote">
+            <i class="bi bi-arrow-down-circle-fill"></i>
+        </span>
     </div>
 
     <div class="media-body">
-        <h2 class="article-title">{{ object.title }}</h2>
-        <p class="article-content">{{ object.content }}</p>
+        <h2 class="article-title">@Model.Question.Title</h2>
+        <div class="article-content">@Model.Question.Content</div>
 
         <div class="row align-items-start">
             @foreach (var tag in Model.Question.tags)
             {
-                <div class="col badge bg-blue">@tag</div>
+                <span class="col badge bg-blue">@tag</span>
             }
         </div>
 
         <div class="article-metadata">
-            <img class="rounded-circle author-img mr-0" src="{{ object.author.profile.img.url }}">
-            <a class="mr-2" href="#">{{ object.author }}</a>
-            <small class="text-muted ml-auto">{{ object.date_posted|date:"F d, Y, P" }}</small>
+            <img class="rounded-circle author-img mr-0" src="@Model.Question.Author.PicturePath">
+
+            @Html.ActionLink(Model.Question.Author.Username, "Profile", "User", 
+                routeValues: new TModel{ ProfileId = Model.Question.Author.Id }, htmlAttributes: new TModel{ @class="mr-2" })
+
+            <small class="text-muted ml-auto">@Model.Question.DatePosted</small>
         </div>
     </div>
-    {% if object.author == user %}
-    <div>
-        @Html.ActionLink("Update", "Update", "Question", new { @QuestionId = Model.Question.Id })
-        <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
-    </div>
-    {% endif %}
+
+    @if (Model.IsAuthorized)
+    {
+        <div>
+            @Html.ActionLink("Update", "Update", "Question", new { @QuestionId = Model.Question.Id })
+            <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+        </div>
+    }
 </article>
 
 <h2 class="article-title">@Model.Answers.Count Answers</h2>
@@ -56,12 +65,14 @@
                     <small class="text-muted ml-auto">{{ object.date_posted|date:"F d, Y, P" }}</small>
                 </div>
             </div>
-            {% if object.author == user %}
-            <div>
-                @Html.ActionLink("Update", "Update", "Answer", new { @AnswerId = ans.Id })
-                <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
-            </div>
-            {% endif %}
+
+            @if (Model.IsAuthorized)
+            {
+                <div>
+                    @Html.ActionLink("Update", "Update", "Answer", new { @AnswerId = ans.Id })
+                    <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                </div>
+            }
         </article>
     }
 }
