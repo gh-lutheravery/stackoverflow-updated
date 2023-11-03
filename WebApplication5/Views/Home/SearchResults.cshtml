@@ -1,0 +1,75 @@
+﻿﻿@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@using X.PagedList.Web.Common;
+
+
+@{
+    ViewData["Title"] = $"\"{Model.SearchQuery}\" Search Results";
+}
+
+@model SearchResultViewModel
+
+
+<div class="row align-items-start">
+    <div class="d-flex justify-content-between">
+        <h1>@Model.QuestionsTitle</h1>
+        @Html.Partial("~/Views/Shared/AskQuestion.cshtml")
+    </div>
+    
+    <div class="row align-items-start">
+        <div class="col">
+          Sort by Newest
+        </div>
+        <div class="col">
+          Sort by Unanswered
+        </div>
+    </div>
+
+    <div class="col-7">
+        @{
+            foreach (var question in Model.Questions)
+            {
+                <div class="media">
+                    <div class="d-flex flex-column">
+                        <div class="p-2">@question.ViewCount Views</div>
+                        <div class="p-2">@question.VoteCount Votes</div>
+                    </div>
+                    <div class="media-body">
+                        <h5 class="mt-0">@question.Title</h5>
+                        @question.TruncatedContent
+                        <div class="d-flex justify-content-between prevent-overflow">
+                            foreach (var tag in @question.tags)
+                            {
+                                <span class="badge bg-blue">@tag</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+        @Html.PagedListPager(Model.Questions, page => Url.Action("SearchResult", "Home", new { Page = page, SearchQuery = Model.SearchQuery }),
+        new PagedListRenderOptions
+        {
+            DisplayItemSliceAndTotal = false,
+            ContainerDivClasses = new [] { "navigation" },
+            LiElementClasses = new string[] { "page-item" }, 
+            PageClasses = new string[] { "page-link" } 
+        })
+    </div>
+
+    <div class="col-3">
+        <h1>Random Tags</h1>
+        <ul>
+            @{
+                foreach (var tag in Model.RandomTags)
+                {
+                    <li class="badge rounded-pill bg-blue">
+                        @tag.Name
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+
