@@ -1,15 +1,22 @@
 ﻿@model QuestionAnswerModel
 
 @Html.Partial("~/Views/Shared/_AskQuestion.cshtml")
+
+@section Head 
+{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+}
+
+
 <article class="media content-section mb-5">
     <div class="d-flex flex-column">
         <!-- use bootstrap icons for up/down arrows -->
         <span class="vote">
-            <i class="bi bi-arrow-up-circle-fill"></i>
+            <button id="ques-up-vote"><i class="bi bi-arrow-up-circle-fill"></i></button>
         </span>
-        <span class="vote-count">@Model.Question.VoteCount</span>
+        <span id="ques-vote-count" class="vote-count">@Model.Question.VoteCount</span>
         <span class="vote">
-            <i class="bi bi-arrow-down-circle-fill"></i>
+            <button id="ques-down-vote"><i class="bi bi-arrow-down-circle-fill"></i></button>
         </span>
     </div>
 
@@ -48,31 +55,114 @@
 @{
     foreach (var ans in @Model.Answers)
     {
-        <article class="media content-section mb-5">
-            <div class="d-flex flex-column">
-                <span class="sprite vote"></span>
-                <span class="vote-count">@Model.VoteCount</span>
-                <span class="sprite vote"></span>
+    <article class="media content-section mb-5">
+        <div class="d-flex flex-column">
+            <span class="vote">
+                <button class="ans-up-vote"><i class="bi bi-arrow-up-circle-fill"></i></button>
+            </span>
+            <span class="ans-vote-count">@ans.VoteCount</span>
+            <span class="vote">
+                <button class="ans-down-vote"><i class="bi bi-arrow-down-circle-fill"></i></button>
+            </span>
+        </div>
+
+        <div class="media-body">
+            <h2 class="article-title">{{ object.title }}</h2>
+            <p class="article-content">{{ object.content }}</p>
+
+            <div class="article-metadata">
+                <img class="rounded-circle author-img mr-0" src="{{ object.author.profile.img.url }}">
+                <a class="mr-2" href="#">{{ object.author }}</a>
+                <small class="text-muted ml-auto">{{ object.date_posted|date:"F d, Y, P" }}</small>
             </div>
+        </div>
 
-            <div class="media-body">
-                <h2 class="article-title">{{ object.title }}</h2>
-                <p class="article-content">{{ object.content }}</p>
-
-                <div class="article-metadata">
-                    <img class="rounded-circle author-img mr-0" src="{{ object.author.profile.img.url }}">
-                    <a class="mr-2" href="#">{{ object.author }}</a>
-                    <small class="text-muted ml-auto">{{ object.date_posted|date:"F d, Y, P" }}</small>
-                </div>
+        @if (Model.IsAuthorized)
+        {
+            <div>
+                @Html.ActionLink("Update", "Update", "Answer", new { @AnswerId = ans.Id })
+                <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
             </div>
-
-            @if (Model.IsAuthorized)
-            {
-                <div>
-                    @Html.ActionLink("Update", "Update", "Answer", new { @AnswerId = ans.Id })
-                    <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
-                </div>
-            }
-        </article>
+        }
+    </article>
     }
 }
+
+
+@section Scripts 
+{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        function incrementVoteCount(element, vote) {
+            let voteCount = Number($element.text());
+
+            if (vote) {
+                $element.text(
+                    String(voteCount + 1)
+                );
+            }
+            else {
+                $element.text(
+                    String(voteCount - 1)
+                );
+            }
+        }
+
+        function handleQuestionVote(element, color, vote) {
+            // vote is true when upvoting, and vice versa
+            $element.css('background-color', color);
+
+            incrementVoteCount($('#ques-vote-count'), vote);
+
+            $.ajax({
+                url: '@Url.Action("UpdateVote", "Question")',
+                method: 'POST',
+                data: { questionId: @Model.Question.Id, upVote: vote },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                error: function() {
+                    console.log('Error voting post.');
+                }
+            });
+        }
+
+        function handleAnswerVote(element, color, vote) {
+            $element.css('background-color', color);
+
+            let voteContainer = $element.parent().parent();
+            let voteCountEl = voteContainer.children('.ans-vote-count')[0];
+
+            incrementVoteCount(voteCountEl, vote);
+
+            $.ajax({
+                url: '@Url.Action("UpdateVote", "Answer")',
+                method: 'POST',
+                data: { answerId: @Model.Question.Id, upVote: vote },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                error: function() {
+                    console.log('Error voting post.');
+                }
+            });
+        }
+
+        $('#ques-up-vote').click(function(){
+            handleQuestionVote($(this), "#0066ffff", true)
+        });
+
+        $('#ques-down-vote').click(function(){
+            handleQuestionVote($(this), "#42414cff", false)
+        });
+
+        $('.ans-up-vote').click(function(){
+            handleAnswerVote($(this), "#0066ffff", true)
+        });
+
+        $('.ans-down-vote').click(function(){
+            handleAnswerVote($(this), "#42414cff", false)
+        });
+    </script>
+}
+
+
