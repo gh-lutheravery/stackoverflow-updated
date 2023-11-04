@@ -12,22 +12,22 @@
             @{
                 foreach (var question in Model.Questions)
                 {
-                    <div class="media">
-                        <div class="d-flex flex-column">
-                            <div class="p-2">@question.ViewCount Views</div>
-                            <div class="p-2">@question.VoteCount Votes</div>
-                        </div>
-                        <div class="media-body">
-                            <h5 class="mt-0">@question.Title</h5>
-                            @question.TruncatedContent
-                            <div class="d-flex justify-content-between prevent-overflow">
-                                foreach (var tag in @question.tags)
-                                {
-                                    <div class="badge bg-blue">@tag</div>
-                                }
+                        <div class="media">
+                            <div class="d-flex flex-column">
+                                <div class="p-2">@question.ViewCount Views</div>
+                                <div class="p-2">@question.VoteCount Votes</div>
+                            </div>
+                            <div class="media-body">
+                                <h5 class="mt-0">@question.Title</h5>
+                                @question.TruncatedContent
+                                <div class="d-flex justify-content-between prevent-overflow">
+                                    foreach (var tag in @question.tags)
+                                    {
+                                        <div class="badge bg-blue">@tag</div>
+                                    }
+                                </div>
                             </div>
                         </div>
-                    </div>
                 }
             }
         </div>
@@ -35,18 +35,18 @@
             @{
                 foreach (var answer in Model.Answers)
                 {
-                    <div class="media">
-                        <div class="d-flex flex-column">
-                            <div class="p-2">@answer.VoteCount Votes</div>
-                            @if (answer.IsAccepted)
+                        <div class="media">
+                            <div class="d-flex flex-column">
+                                <div class="p-2">@answer.VoteCount Votes</div>
+                                @if (answer.IsAccepted)
                             {
-                                <div class="p-2">This answer was accepted.</div>
+                                    <div class="p-2">This answer was accepted.</div>
                             }
+                            </div>
+                            <div class="media-body">
+                                @answer.TruncatedContent
+                            </div>
                         </div>
-                        <div class="media-body">
-                            @answer.TruncatedContent
-                        </div>
-                    </div>
                 }
             }
         </div>
@@ -74,3 +74,13 @@
 </div>
 
 
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+    <script>
+        $(function() {
+            $("#tabs").tabs();
+        });
+    </script>
+}
