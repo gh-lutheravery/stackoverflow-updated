@@ -23,6 +23,12 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                     </ul>
+
+                    @using (Html.BeginForm("SearchResults", "Home", FormMethod.Get, new { @autocomplete = "off", @class="navbar-nav" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input id="SearchQuery" type="text" placeholder="Search All Questions" class="form-control-lg" />
+                    }
                     
                     @if (User != null)
                     {
