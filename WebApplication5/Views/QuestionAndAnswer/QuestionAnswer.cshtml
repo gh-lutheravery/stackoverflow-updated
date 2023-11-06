@@ -1,4 +1,4 @@
-﻿@model QuestionAnswerModel
+﻿@model QuestionAnswerViewModel
 
 @Html.Partial("~/Views/Shared/_AskQuestion.cshtml")
 
@@ -35,17 +35,18 @@
             <img class="rounded-circle author-img mr-0" src="@Model.Question.Author.PicturePath">
 
             @Html.ActionLink(Model.Question.Author.Username, "Profile", "User", 
-                routeValues: new TModel{ ProfileId = Model.Question.Author.Id }, htmlAttributes: new TModel{ @class="mr-2" })
+                routeValues: new TModel{ @ProfileId = Model.Question.Author.Id }, htmlAttributes: new TModel{ @class="mr-2" })
 
             <small class="text-muted ml-auto">@Model.Question.DatePosted</small>
         </div>
     </div>
 
-    @if (Model.IsAuthorized)
+    @if (User == Model.Question.Author)
     {
         <div>
             @Html.ActionLink("Update", "Update", "Question", new { @QuestionId = Model.Question.Id })
             <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+            @Html.Partial("~/Shared/DeleteModal.cshtml", Model.DeleteQuestionModel)
         </div>
     }
 </article>
@@ -67,27 +68,31 @@
         </div>
 
         <div class="media-body">
-            <h2 class="article-title">{{ object.title }}</h2>
-            <p class="article-content">{{ object.content }}</p>
+            <p class="article-content">@ans.Content</p>
 
             <div class="article-metadata">
-                <img class="rounded-circle author-img mr-0" src="{{ object.author.profile.img.url }}">
-                <a class="mr-2" href="#">{{ object.author }}</a>
-                <small class="text-muted ml-auto">{{ object.date_posted|date:"F d, Y, P" }}</small>
+                <img class="rounded-circle author-img mr-0" src="@ans.Author.PicturePath">
+
+                @Html.ActionLink(ans.Author.Username, "Profile", "User", 
+                    routeValues: new TModel{ @ProfileId = Model.Question.Author.Id }, htmlAttributes: new TModel{ @class="mr-2" })
+
+                <small class="text-muted ml-auto">@ans.DatePosted</small>
             </div>
         </div>
 
-        @if (Model.IsAuthorized)
+        @if (User == ans.Author)
         {
             <div>
                 @Html.ActionLink("Update", "Update", "Answer", new { @AnswerId = ans.Id })
                 <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                @Html.Partial("~/Shared/DeleteModal.cshtml", Model.DeleteAnswerModel)
             </div>
         }
     </article>
     }
 }
 
+@Html.Partial("_AnswerCreate.cshtml", Model.AnswerCreateForm)
 
 @section Scripts 
 {
