@@ -6,8 +6,6 @@ namespace WebApplication5.ViewModels.Home
 	{
 		public string QuestionsTitle { get; set; }
 
-		public string TagsStr { get; set; }
-
 		public List<Question> Questions { get; set; }
 
 		public List<string> RandomTags { get; set; }
