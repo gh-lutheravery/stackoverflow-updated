@@ -36,7 +36,7 @@
                     <p class="dropdown-item-text">Tags</p>
                     @using (Html.BeginForm("IndexFilterByTag", "Home", FormMethod.Get))
                     {
-                        <input class="dropdown-item" name="tagify" id="TagQuery" value="@Model.TagsStr" autofocus>
+                        <input class="dropdown-item" name="tagify" id="TagQuery" autofocus>
                     }
                 </li>
             </ul>
