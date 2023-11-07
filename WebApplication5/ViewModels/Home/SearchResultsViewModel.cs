@@ -1,6 +1,6 @@
 ﻿namespace WebApplication5.ViewModels.Home
 {
-	public class SearchResults : HomeViewModel
+	public class SearchResultsViewModel : HomeViewModel
 	{
 		public string SearchQuery { get; set; }
 	}

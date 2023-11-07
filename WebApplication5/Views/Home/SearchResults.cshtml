@@ -7,13 +7,15 @@
     ViewData["Title"] = $"\"{Model.SearchQuery}\" Search Results";
 }
 
-@model SearchResultsViewModel
+@model WebApplication5.ViewModels.Home.SearchResultsViewModel
 
 
 <div class="row align-items-start">
     <div class="d-flex justify-content-between">
         <h1>@Model.QuestionsTitle</h1>
-        @Html.Partial("~/Views/Shared/AskQuestion.cshtml")
+        <div class="ml-2 mt-auto mb-auto">
+            @Html.Partial("~/Views/Shared/AskQuestion.cshtml")
+        </div>
     </div>
     
     <div class="row align-items-start">
@@ -25,7 +27,7 @@
         </div>
     </div>
 
-    <div class="col-7">
+    <div class="col-7 mr-2">
         @{
             foreach (var question in Model.Questions)
             {
@@ -35,10 +37,10 @@
                         <div class="p-2">@question.VoteCount Votes</div>
                     </div>
                     <div class="media-body">
-                        <h5 class="mt-0">@question.Title</h5>
+                        <h4 class="mt-0">@question.Title</h4>
                         @question.TruncatedContent
-                        <div class="d-flex justify-content-between prevent-overflow">
-                            foreach (var tag in @question.tags)
+                        <div class="d-flex justify-content-around prevent-overflow">
+                            @foreach (var tag in @question.tags)
                             {
                                 <span class="badge bg-blue">@tag</span>
                             }
@@ -48,7 +50,7 @@
             }
         }
 
-        @Html.PagedListPager(Model.Questions, page => Url.Action("SearchResult", "Home", new { Page = page, SearchQuery = Model.SearchQuery }),
+        @Html.PagedListPager(Model.Questions, page => Url.Action("Index", "Home", new { page = page }),
         new PagedListRenderOptions
         {
             DisplayItemSliceAndTotal = false,
@@ -60,14 +62,12 @@
 
     <div class="col-3">
         <h1>Random Tags</h1>
-        <ul>
-            @{
-                foreach (var tag in Model.RandomTags)
-                {
-                    <li class="badge rounded-pill bg-blue">
-                        @tag.Name
-                    </li>
-                }
+        <ul class="list-unstyled">
+            @foreach (var tag in Model.RandomTags)
+            {
+                <li class="badge rounded-pill bg-blue">
+                    @tag
+                </li>
             }
         </ul>
     </div>
