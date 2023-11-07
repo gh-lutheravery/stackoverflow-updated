@@ -100,15 +100,15 @@
 
     <script>
         function incrementVoteCount(element, vote) {
-            let voteCount = Number($element.text());
+            let voteCount = Number(element.text());
 
             if (vote) {
-                $element.text(
+                element.text(
                     String(voteCount + 1)
                 );
             }
             else {
-                $element.text(
+                element.text(
                     String(voteCount - 1)
                 );
             }
@@ -116,7 +116,7 @@
 
         function handleQuestionVote(element, color, vote) {
             // vote is true when upvoting, and vice versa
-            $element.css('background-color', color);
+            element.css('background-color', color);
 
             incrementVoteCount($('#ques-vote-count'), vote);
 
@@ -133,9 +133,9 @@
         }
 
         function handleAnswerVote(element, color, vote) {
-            $element.css('background-color', color);
+            element.css('background-color', color);
 
-            let voteContainer = $element.parent().parent();
+            let voteContainer = element.parent().parent();
             let voteCountEl = voteContainer.children('.ans-vote-count')[0];
 
             incrementVoteCount(voteCountEl, vote);
