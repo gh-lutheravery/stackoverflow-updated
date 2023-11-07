@@ -2,18 +2,18 @@
 @using X.PagedList;
 @using X.PagedList.Web.Common;
 
-
 @{
     ViewData["Title"] = "All Questions";
 }
 
-
-@model HomeViewModel
+@model WebApplication5.ViewModels.Home.HomeViewModel
 
 <div class="row align-items-start">
     <div class="d-flex justify-content-between">
         <h1>@Model.QuestionsTitle</h1>
-        @Html.Partial("~/Views/Shared/AskQuestion.cshtml")
+        <div class="ml-2 mt-auto mb-auto">
+            @Html.Partial("~/Views/Shared/AskQuestion.cshtml")
+        </div>
     </div>
     
     <div class="row align-items-start">
@@ -29,8 +29,8 @@
             </a>
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                @Html.ActionLink("No answers", "Index", "Home", htmlAttributes: { @class="dropdown-item" }, routeValues: { filter="NoAnswers" })
-                @Html.ActionLink("No accepted answers", "Index", "Home", htmlAttributes: { @class="dropdown-item" }, routeValues: { filter="NoAcceptedAnswers" })
+                @Html.ActionLink("No answers", "Index", "Home", htmlAttributes: new { @class="dropdown-item" }, routeValues: new { filter="NoAnswers" })
+                @Html.ActionLink("No accepted answers", "Index", "Home", htmlAttributes: new { @class="dropdown-item" }, routeValues: new { filter="NoAcceptedAnswers" })
                 <li>
                     <br />
                     <p class="dropdown-item-text">Tags</p>
@@ -43,7 +43,7 @@
         </div>
     </div>
 
-    <div class="col-7">
+    <div class="col-7 mr-2">
         @{
             foreach (var question in Model.Questions)
             {
@@ -53,10 +53,10 @@
                         <div class="p-2">@question.VoteCount Votes</div>
                     </div>
                     <div class="media-body">
-                        <h5 class="mt-0">@question.Title</h5>
+                        <h4 class="mt-0">@question.Title</h4>
                         @question.TruncatedContent
-                        <div class="d-flex justify-content-between prevent-overflow">
-                            foreach (var tag in @question.tags)
+                        <div class="d-flex justify-content-around prevent-overflow">
+                            @foreach (var tag in @question.tags)
                             {
                                 <span class="badge bg-blue">@tag</span>
                             }
@@ -78,14 +78,12 @@
 
     <div class="col-3">
         <h1>Random Tags</h1>
-        <ul>
-            @{
-                foreach (var tag in Model.RandomTags)
-                {
-                    <li class="badge rounded-pill bg-blue">
-                        @tag.Name
-                    </li>
-                }
+        <ul class="list-unstyled">
+            @foreach (var tag in Model.RandomTags)
+            {
+                <li class="badge rounded-pill bg-blue">
+                    @tag
+                </li>
             }
         </ul>
     </div>
