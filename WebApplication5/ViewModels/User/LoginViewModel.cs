@@ -1,8 +1,13 @@
-﻿namespace WebApplication5.ViewModels.User
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebApplication5.ViewModels.User
 {
 	public class LoginViewModel
 	{
-		public string Email { get; set; }
-		public string Password { get; set; }
+        [Required]
+        public string Email { get; set; }
+
+        [Required]
+        public string Password { get; set; }
 	}
 }
