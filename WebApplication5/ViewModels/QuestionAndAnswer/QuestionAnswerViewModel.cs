@@ -1,4 +1,7 @@
-﻿namespace WebApplication5.ViewModels.QuestionAndAnswer
+﻿using WebApplication5.Models;
+using WebApplication5.ViewModels.Shared;
+
+namespace WebApplication5.ViewModels
 {
 	public class QuestionAnswerViewModel
 	{
