@@ -21,7 +21,7 @@
                             <h5 class="mt-0">@question.Title</h5>
                             @question.TruncatedContent
                             <div class="d-flex justify-content-between prevent-overflow">
-                                foreach (var tag in @question.tags)
+                                @foreach (var tag in @question.Tags)
                                 {
                                     <div class="badge bg-blue">@tag</div>
                                 }
@@ -57,9 +57,9 @@
             <img class="card-img-top" src="@Model.PicturePath" alt="Profile Picture">
             <div class="card-body">
                 <div class="d-flex">
-                    <h5 class="card-title">@Model.Username</h5>
+                    <h5 class="card-title">@Model.Name</h5>
                     <h6 class="card-title text-muted">@Model.Email</h6>
-                    @if (User == Model.User)
+                    @if ((bool)ViewData["IsAuthenticated"])
                     {
                         <a class="btn btn-dark" asp-area="" asp-controller="User" asp-action="Update">Update</a>
                         <button type="button" class="btn btn-outline-dark btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
@@ -67,7 +67,7 @@
                 </div>
                 
                 <p class="card-text">@Model.Bio</p>
-                <p class="card-text"><small class="text-muted">@Model.JoinDate.ToString()</small></p>
+                <p class="card-text"><small class="text-muted">@Model..ToString()</small></p>
             </div>
         </div>
     </div>

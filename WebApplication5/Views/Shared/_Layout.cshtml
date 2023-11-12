@@ -31,7 +31,7 @@
                         <input id="SearchQuery" type="text" placeholder="Search All Questions" class="form-control-lg" />
                     }
                     
-                    @if (User != null)
+                    @if ((bool)ViewData["IsAuthenticated"])
                     {
                         <ul class="navbar-nav flex-grow-2">
                             <li class="nav-item">

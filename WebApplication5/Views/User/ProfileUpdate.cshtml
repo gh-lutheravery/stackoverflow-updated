@@ -8,9 +8,9 @@
     {
         @Html.AntiForgeryToken()
         <div class="form-group">
-            @Html.LabelFor(m => m.Username, "Username")
-            @Html.TextBoxFor(m => m.Username, "", new { @class = "form-control form-control-lg", 
-                @type = "text", @value = Model.Username
+            @Html.LabelFor(m => m.Name, "Username")
+            @Html.TextBoxFor(m => m.Name, "", new { @class = "form-control form-control-lg", 
+                @type = "text", @value = Model.Name
             })
         </div>
 
@@ -37,7 +37,7 @@
 
         <div class="form-group">
             @Html.Label("Confirm Password")
-            @Html.TextBoxFor(m => m.PasswordConfirm, "", new { @class = "form-control form-control-lg", 
+            @Html.TextBoxFor(m => m.ConfirmPassword, "", new { @class = "form-control form-control-lg", 
                 @type = "text", @placeholder = "Repeat your new password" 
             })
         </div>

@@ -7,8 +7,8 @@
     {
         @Html.AntiForgeryToken()
         <div class="form-group">
-            @Html.LabelFor(m => m.Username, "Username")
-            @Html.TextBoxFor(m => m.Username, "", new { @class = "form-control form-control-lg", 
+            @Html.LabelFor(m => m.Name, "Username")
+            @Html.TextBoxFor(m => m.Name, "", new { @class = "form-control form-control-lg", 
                 @type = "text", @placeholder = "Username" 
             })
         </div>
@@ -29,7 +29,7 @@
 
         <div class="form-group">
             @Html.Label("Confirm Password")
-            @Html.TextBoxFor(m => m.PasswordConfirm, "", new { @class = "form-control form-control-lg", 
+            @Html.TextBoxFor(m => m.ConfirmPassword, "", new { @class = "form-control form-control-lg", 
                 @type = "text", @placeholder = "Repeat your password" 
             })
         </div>
@@ -41,7 +41,7 @@
 
     <div class="border-top pt-3">
         <small class="text-muted">
-            Already have an account? @Html.ActionLink("Sign in here", "Login", "User", htmlAttributes: new TModel{ @class="ml-2" })
+            Already have an account? @Html.ActionLink("Sign in here", "Login", "User", htmlAttributes: new { @class="ml-2" })
         </small>
     </div>
 </div>
