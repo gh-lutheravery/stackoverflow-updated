@@ -13,9 +13,12 @@
         @Html.AntiForgeryToken()
 
         <div class="form-group">
-            @Html.LabelFor(m => m.Content, "Enter your Answer")
-            @Html.LabelFor(m => m.Content, "Be sure to provide details and explain how your answer works.")
-            @Html.Editor(m => m.Content, "", "content-editor", new { @class = "form-control", @id="editor")
+            @* TODO: read bm on adding quill js in asp.net *@
+            <div class="form-group">
+                @Html.LabelFor(m => m.Content, "Content")
+                @Html.LabelFor(m => m.Content, "Elaborate on your title here and what you wanted your code to do.")
+                <div id="editor" class="form-control"></div>
+            </div>
         </div>
 
         <div class="form-group">

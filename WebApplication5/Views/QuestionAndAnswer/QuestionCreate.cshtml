@@ -20,16 +20,18 @@
             })
         </div>
 
+        // TODO: read bm on adding quill js in asp.net
         <div class="form-group">
             @Html.LabelFor(m => m.Content, "Content")
             @Html.LabelFor(m => m.Content, "Elaborate on your title here and what you wanted your code to do.")
-            @Html.Editor(m => m.Content, "", "#content-editor", new { @class = "form-control", @id="editor")
+            <div id="editor" class="form-control"></div>
         </div>
 
+        // TODO: add textbox and setup tagify inside that
         <div class="form-group">
-            @Html.LabelFor(m => m.Tags, "Tags")
-            @Html.LabelFor(m => m.Tags, "Categorize your question by adding up to 5 tags.")
-            @Html.ListBox(m => m.Tags, Model.AllTags, new { @class = "form-control")
+            <label for="TagQuery">Tags</label>
+            <label for="TagQuery">Categorize your question by adding up to 5 tags.</label>
+            <input class="dropdown-item" name="tagify" id="TagQuery" autofocus>
         </div>
 
         <div class="form-group">
@@ -40,6 +42,7 @@
 
 @section Scripts {
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@@yaireo/tagify"></script>
     <script>
         var quill = new Quill('#editor', {
           modules: {
@@ -51,5 +54,10 @@
           },
           theme: 'snow'
         });
+
+        var tagInput = document.getElementById('input[name=tagify]');
+
+        // initialize Tagify for tag input
+        new Tagify(tagInput);
     </script>
 }

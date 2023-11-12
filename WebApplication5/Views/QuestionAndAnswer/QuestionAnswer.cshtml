@@ -5,6 +5,7 @@
 @section Head 
 {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 }
 
 
@@ -25,7 +26,7 @@
         <div class="article-content">@Model.Question.Content</div>
 
         <div class="row align-items-start">
-            @foreach (var tag in Model.Question.tags)
+            @foreach (var tag in Model.Question.Tags)
             {
                 <span class="col badge bg-blue">@tag</span>
             }
@@ -34,14 +35,14 @@
         <div class="article-metadata">
             <img class="rounded-circle author-img mr-0" src="@Model.Question.Author.PicturePath">
 
-            @Html.ActionLink(Model.Question.Author.Username, "Profile", "User", 
-                routeValues: new TModel{ @ProfileId = Model.Question.Author.Id }, htmlAttributes: new TModel{ @class="mr-2" })
+            @Html.ActionLink(Model.Question.Author.Name, "Profile", "User", 
+                routeValues: new { @ProfileId = Model.Question.Author.Id }, htmlAttributes: new { @class="mr-2" })
 
-            <small class="text-muted ml-auto">@Model.Question.DatePosted</small>
+            <small class="text-muted ml-auto">@Model.Question.DateCreated</small>
         </div>
     </div>
 
-    @if (User == Model.Question.Author)
+    @if ((bool)ViewData["IsAuthenticated"])
     {
         <div>
             @Html.ActionLink("Update", "Update", "Question", new { @QuestionId = Model.Question.Id })
@@ -73,14 +74,14 @@
             <div class="article-metadata">
                 <img class="rounded-circle author-img mr-0" src="@ans.Author.PicturePath">
 
-                @Html.ActionLink(ans.Author.Username, "Profile", "User", 
-                    routeValues: new TModel{ @ProfileId = Model.Question.Author.Id }, htmlAttributes: new TModel{ @class="mr-2" })
+                @Html.ActionLink(ans.Author.Name, "Profile", "User", 
+                    routeValues: new { @ProfileId = Model.Question.Author.Id }, htmlAttributes: new { @class="mr-2" })
 
-                <small class="text-muted ml-auto">@ans.DatePosted</small>
+                <small class="text-muted ml-auto">@ans.DateCreated</small>
             </div>
         </div>
 
-        @if (User == ans.Author)
+        @if ((bool)ViewData["IsAuthenticated"])
         {
             <div>
                 @Html.ActionLink("Update", "Update", "Answer", new { @AnswerId = ans.Id })
