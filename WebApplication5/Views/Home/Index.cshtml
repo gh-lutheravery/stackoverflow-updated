@@ -53,10 +53,10 @@
                         <div class="p-2">@question.VoteCount Votes</div>
                     </div>
                     <div class="media-body">
-                        <h4 class="mt-0">@question.Title</h4>
+                        <h4 class="mt-0">@question.</h4>
                         @question.TruncatedContent
                         <div class="d-flex justify-content-around prevent-overflow">
-                            @foreach (var tag in @question.tags)
+                            @foreach (var tag in @question.Tags)
                             {
                                 <span class="badge bg-blue">@tag</span>
                             }
@@ -65,7 +65,7 @@
                 </div>
             }
         }
-
+        
         @Html.PagedListPager(Model.Questions, page => Url.Action("Index", "Home", new { page = page }),
         new PagedListRenderOptions
         {
@@ -92,7 +92,7 @@
 
 @section Scripts 
 {
-    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@@yaireo/tagify"></script>
 
     <script>
         var tagInput = document.getElementById('input[name=tagify]');

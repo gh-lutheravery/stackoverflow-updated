@@ -2,7 +2,6 @@
 @using X.PagedList;
 @using X.PagedList.Web.Common;
 
-
 @{
     ViewData["Title"] = $"\"{Model.SearchQuery}\" Search Results";
 }
@@ -40,7 +39,7 @@
                         <h4 class="mt-0">@question.Title</h4>
                         @question.TruncatedContent
                         <div class="d-flex justify-content-around prevent-overflow">
-                            @foreach (var tag in @question.tags)
+                            @foreach (var tag in @question.Tags)
                             {
                                 <span class="badge bg-blue">@tag</span>
                             }
