@@ -4,9 +4,13 @@
     {
         public int Id { get; set; }
 
-        public int Vote { get; set; }
-
         public string? Content { get; set; }
+
+        public string? TruncatedContent { get; set; }
+
+        public Profile? Author { get; set; }
+
+        public int VoteCount { get; set; }
 
         public DateTime DateCreated { get; set; }
 

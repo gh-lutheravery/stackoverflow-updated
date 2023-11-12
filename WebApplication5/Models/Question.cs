@@ -2,6 +2,8 @@
 {
     public class Question : Post
     {
+        public string? Title { get; set; }
+
         public List<Tag>? Tags { get; set; }
 
         public int ViewCount { get; set; }

@@ -14,6 +14,8 @@
 
         public string? Bio { get; set; }
 
+        public DateTime? DateCreated { get; set; }
+
         public List<Question>? Questions { get; set; }
 
         public List<Answer>? Answers { get; set; }
