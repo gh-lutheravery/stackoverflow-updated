@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using WebApplication5.Models;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace WebApplication5.ViewModels.User
 {
