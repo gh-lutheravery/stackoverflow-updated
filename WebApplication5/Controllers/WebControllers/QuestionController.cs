@@ -5,28 +5,12 @@ using WebApplication5.ViewModels.QuestionAndAnswer;
 
 namespace WebApplication5.Controllers.WebControllers
 {
-    public class QuestionAndAnswerController : Controller
+    public class QuestionController : Controller
     {
         public ActionResult QuestionAnswer(int id)
         {
             QuestionAnswerViewModel viewModel = new QuestionAnswerViewModel();
             return View(viewModel);
-        }
-
-
-        // post endpoint for submitting answers
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult QuestionAnswer(QuestionAnswerViewModel viewModel)
-        {
-            if (ModelState.IsValid)
-            {
-                return RedirectToAction(nameof(QuestionAnswer), viewModel.Question.Id);
-            }
-            else
-            {
-                return View(viewModel);
-            }
         }
 
 
@@ -51,25 +35,32 @@ namespace WebApplication5.Controllers.WebControllers
             }
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AnswerCreate(AnswerCreateViewModel viewModel)
+        public ActionResult QuestionUpdate(QuestionCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                
+                return RedirectToAction(nameof(QuestionAnswer));
             }
-           
-            return RedirectToAction(nameof(QuestionAnswer), viewModel.Question.Id);
+            else
+            {
+                return View(viewModel);
+            }
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id)
+        public ActionResult QuestionDelete(QuestionCreateViewModel viewModel)
         {
-            return RedirectToAction(nameof(Index));
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(QuestionAnswer));
+            }
+            else
+            {
+                return View(viewModel);
+            }
         }
     }
 }
