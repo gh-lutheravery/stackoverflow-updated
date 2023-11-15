@@ -5,22 +5,12 @@ namespace WebApplication5.ViewModels.QuestionAndAnswer
 {
     public class QuestionCreateViewModel
     {
-        public Profile OriginalProfile { get; set; }
+        public List<string> Tags { get; set; }
 
-        public string Name { get; set; }
+        public string Title { get; set; }
 
-        [EmailAddress]
-        public string Email { get; set; }
+        public string Content { get; set; }
 
-        [MinLength(8)]
-        public string Password { get; set; }
-
-        [Compare(nameof(Password))]
-        public string ConfirmPassword { get; set; }
-
-        [FileExtensions]
-        public string? PicturePath { get; set; }
-
-        public string? Bio { get; set; }
+        public string TruncatedContent { get; set; }
     }
 }
