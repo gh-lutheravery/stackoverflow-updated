@@ -14,7 +14,8 @@ namespace WebApplication5.Controllers.DataServices
             _context = context;
         }
 
-        public Profile GetById(int id)
+        // profile methods
+        public Profile GetProfileById(int id)
         {
             var profile = _context.Profile
                 .Include(p => p.Questions)
@@ -25,10 +26,84 @@ namespace WebApplication5.Controllers.DataServices
             return profile;
         }
 
-        public void Create(Profile newProfile) 
+        public void CreateProfile(Profile newProfile) 
         {
             _context.Profile.Add(newProfile);
             _context.SaveChanges();
+        }
+
+        public void UpdateProfile(Profile newProfile) { }
+
+        public void DeleteProfile(int id) { }
+
+        // question methods
+        public IQueryable<Question> GetAllQuestions(bool include) 
+        {
+            IQueryable<Question> questions;
+            if (include)
+            {
+                questions = _context.Question
+                    .Include(p => p.Tags)
+                    .Include(p => p.Author)
+                    .AsNoTracking();
+            }
+            else
+            {
+                questions = _context.Question
+                    .AsNoTracking();
+            }
+
+            return questions;
+        }
+
+        public Question GetQuestionById(int id)
+        {
+            var question = _context.Question
+                .Include(p => p.Tags)
+                .Include(p => p.Author)
+                .AsNoTracking()
+                .SingleOrDefault(p => p.Id == id);
+
+            return question;
+        }
+
+        public void CreateQuestion(Question newQuestion)
+        {
+            _context.Question.Add(newQuestion);
+            _context.SaveChanges();
+        }
+
+        public void UpdateQuestion(Profile newProfile) { }
+
+        public void DeleteQuestion(int id) { }
+
+        // answer methods
+        public IQueryable<Answer> GetAllAnswers()
+        {
+            IQueryable<Answer> answers = _context.Answer
+                .Include(a => a.Author)
+                .AsNoTracking();
+            
+            return answers;
+        }
+
+        // tag methods
+        public IQueryable<Tag> GetAllTags(bool include)
+        {
+            IQueryable<Tag> tags;
+            if (include)
+            {
+                tags = _context.Tag
+                    .Include(p => p.Questions)
+                    .AsNoTracking();
+            }
+            else
+            {
+                tags = _context.Tag
+                    .AsNoTracking();
+            }
+
+            return tags;
         }
     }
 }
