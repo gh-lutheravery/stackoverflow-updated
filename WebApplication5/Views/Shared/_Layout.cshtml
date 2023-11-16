@@ -25,10 +25,10 @@
                         </li>
                     </ul>
 
-                    @using (Html.BeginForm("SearchResults", "Home", FormMethod.Get, new { @autocomplete = "off", @class="navbar-nav" }))
+                    @using (Html.BeginForm("Search", "Home", FormMethod.Get, new { @autocomplete = "off", @class="navbar-nav" }))
                     {
                         @Html.AntiForgeryToken()
-                        <input id="SearchQuery" type="text" placeholder="Search All Questions" class="form-control-lg" />
+                        <input id="searchQuery" type="text" placeholder="Search All Questions" class="form-control-lg" />
                     }
                     
                     @if ((bool)ViewData["IsAuthenticated"])
