@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using WebApplication5.Controllers.DataServices;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using WebApplication5.Controllers.BusinessControllers;
 using WebApplication5.Models;
 using WebApplication5.ViewModels.User;
 
@@ -8,16 +12,21 @@ namespace WebApplication5.Controllers.WebControllers
     [Route("user")]
     public class ProfileController : Controller
     {
-        public ProfileController()
+        private readonly ProfileBusinessController _businessController;
+        public ProfileController(ProfileBusinessController businessController)
         {
+            _businessController = businessController;
         }
 
         [Route("{id}")]
         public ActionResult Profile(int id)
         {
-            if (profile != null)
-                return View(profile);
-            return NotFound();
+            var profile = _businessController.GetProfileWithQA(id);
+            if (profile is null)
+                return NotFound();
+
+            return View(profile);
+            
         }
 
         public ActionResult Login()
@@ -32,6 +41,18 @@ namespace WebApplication5.Controllers.WebControllers
         {
             if (ModelState.IsValid)
             {
+                var loginInfo = _businessController.AuthenticateUser(vm, new PasswordHasher<Profile>());
+                if (loginInfo == null)
+                    return View(vm);
+
+                var claims = loginInfo.Value.Item1;
+                var authProperties = loginInfo.Value.Item2;
+
+                HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claims),
+                    authProperties);
+
                 return RedirectToAction(nameof(Profile));
             }
             else
@@ -53,6 +74,7 @@ namespace WebApplication5.Controllers.WebControllers
         {
             if (ModelState.IsValid)
             {
+                _businessController.Register(vm, new PasswordHasher<Profile>());
                 return RedirectToAction(nameof(Login));
             }
             else
@@ -74,6 +96,7 @@ namespace WebApplication5.Controllers.WebControllers
         {
             if (ModelState.IsValid)
             {
+                _businessController.ProfileUpdate(vm);
                 return RedirectToAction(nameof(Profile));
             }
             else
@@ -86,6 +109,7 @@ namespace WebApplication5.Controllers.WebControllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
         {
+            _businessController.ProfileDelete(id);
             return RedirectToAction(nameof(Index));
         }
     }

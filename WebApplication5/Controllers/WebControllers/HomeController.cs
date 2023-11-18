@@ -6,7 +6,7 @@ namespace WebApplication5.Controllers.WebControllers
 {
     public class HomeController : Controller
     {
-        private HomeBusinessController _businessController;
+        private readonly HomeBusinessController _businessController;
         public HomeController(HomeBusinessController businessController) 
         { 
             _businessController = businessController;
