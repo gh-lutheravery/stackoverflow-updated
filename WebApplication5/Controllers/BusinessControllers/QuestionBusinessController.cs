@@ -49,24 +49,22 @@ namespace WebApplication5.Controllers.BusinessControllers
         }
 
         // POST: QuestionAndAnswerController/Create
-        public void UpdateQuestion(QuestionCreateViewModel vm, int originalId)
+        public void UpdateQuestion(QuestionUpdateViewModel vm)
         {
-            Question originalQuestion = _contextService.GetQuestionById(originalId);
-
             // check if tags were updated to possibly avoid expensive func calls
-            if (originalQuestion.Tags.Select(t => t.Title) != vm.Tags)
+            if (vm.OriginalQuestion.Tags.Select(t => t.Title) != vm.Tags)
             {
-                List<Tag> newTags = _contextService.GetAllTags(false)
+                vm.OriginalQuestion.Tags = _contextService.GetAllTags(false)
                     .Where(t => vm.Tags.Contains(t.Title)).ToList();
             }
-            
-            originalQuestion.Title = vm.Title;
-            originalQuestion.Content = vm.Content;
-            originalQuestion.ViewCount = 0;
-            originalQuestion.TruncatedContent = vm.TruncatedContent;
-            originalQuestion.DateUpdated = DateTime.Now;
 
-            _contextService.context.Question.Update(originalQuestion);
+            vm.OriginalQuestion.Title = vm.Title;
+            vm.OriginalQuestion.Content = vm.Content;
+            vm.OriginalQuestion.ViewCount = 0;
+            vm.OriginalQuestion.TruncatedContent = vm.TruncatedContent;
+            vm.OriginalQuestion.DateUpdated = DateTime.Now;
+
+            _contextService.context.Question.Update(vm.OriginalQuestion);
             _contextService.context.SaveChanges();
         }
 
