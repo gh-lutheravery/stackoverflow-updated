@@ -32,19 +32,13 @@ namespace WebApplication5.Controllers.BusinessControllers
         }
 
         // POST: AnswerAndAnswerController/Create
-        public void UpdateAnswer(AnswerCreateViewModel vm, int originalId)
+        public void UpdateAnswer(AnswerUpdateViewModel vm)
         {
-            Answer originalAnswer = _contextService.context.Answer
-                .Include(a => a.Author)
-                .Include(a => a.AssociatedQuestion)
-                .SingleOrDefault(a => a.Id == originalId);
+            vm.OriginalAnswer.Content = vm.Content;
+            vm.OriginalAnswer.TruncatedContent = vm.TruncatedContent;
+            vm.OriginalAnswer.DateUpdated = DateTime.Now;
 
-            // check if tags were updated to possibly avoid expensive func calls
-            originalAnswer.Content = vm.Content;
-            originalAnswer.TruncatedContent = vm.TruncatedContent;
-            originalAnswer.DateUpdated = DateTime.Now;
-
-            _contextService.context.Answer.Update(originalAnswer);
+            _contextService.context.Answer.Update(vm.OriginalAnswer);
             _contextService.context.SaveChanges();
         }
 
