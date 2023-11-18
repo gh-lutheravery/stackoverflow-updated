@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -30,7 +31,8 @@ namespace WebApplication5.Controllers.BusinessControllers
             return profile;
         }
 
-        public ClaimsIdentity? AuthenticateUser(LoginViewModel vm, PasswordHasher<Profile> hasher)
+        public (ClaimsIdentity, AuthenticationProperties)? 
+            AuthenticateUser(LoginViewModel vm, PasswordHasher<Profile> hasher)
         { 
             var profile = ValidateLogin(vm, hasher);
             if (profile == null)
@@ -44,7 +46,15 @@ namespace WebApplication5.Controllers.BusinessControllers
             var claimsIdentity = new ClaimsIdentity(
                 claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            return claimsIdentity;
+            var authProperties = new AuthenticationProperties
+            {
+                AllowRefresh = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(1),
+                IsPersistent = false,
+                RedirectUri = ""
+            };
+
+            return (claimsIdentity, authProperties);
         }
 
         public Profile? ValidateLogin(LoginViewModel vm, PasswordHasher<Profile> hasher)
@@ -62,37 +72,49 @@ namespace WebApplication5.Controllers.BusinessControllers
                 return null;
         }
 
-        // POST: QuestionAndAnswerController/Create
-        public void Register(QuestionCreateViewModel vm, int originalId)
+        
+        public void Register(RegisterViewModel vm, PasswordHasher<Profile> hasher)
         {
             string hashed = hasher.HashPassword(new Profile(), vm.Password);
 
-            //Question originalQuestion = _contextService.GetQuestionById(originalId);
+            Profile profile = new Profile();
+            profile.Name = vm.Name;
+            profile.Email = vm.Email;
+            profile.Password = hashed;
+            profile.DateCreated = DateTime.UtcNow;
 
-            //// check if tags were updated to possibly avoid expensive func calls
-            //if (originalQuestion.Tags.Select(t => t.Title) != vm.Tags)
-            //{
-            //    List<Tag> newTags = _contextService.GetAllTags(false)
-            //        .Where(t => vm.Tags.Contains(t.Title)).ToList();
-            //}
-            
-            //originalQuestion.Title = vm.Title;
-            //originalQuestion.Content = vm.Content;
-            //originalQuestion.ViewCount = 0;
-            //originalQuestion.TruncatedContent = vm.TruncatedContent;
-            //originalQuestion.DateUpdated = DateTime.Now;
-
-            _contextService.context.Profile.Add(originalQuestion);
+            _contextService.context.Profile.Add(profile);
             _contextService.context.SaveChanges();
         }
 
         // GET: QuestionAndAnswerController/Edit/5
-        public void DeleteQuestion(int id)
+        public void ProfileUpdate(ProfileUpdateViewModel vm)
         {
-            var question = _contextService.GetQuestionById(id);
+            Profile? profile = _contextService.context.Profile
+                .SingleOrDefault(p => p.Id == vm.OriginalProfile.Id);
 
-            _contextService.context.Question.Remove(question);
-            _contextService.context.SaveChanges();
+            if (profile != null)
+            {
+                profile.Name = vm.Name;
+                profile.Email = vm.Email;
+                profile.PicturePath = vm.PicturePath;
+                profile.Bio = vm.Bio;
+
+                _contextService.context.Profile.Update(profile);
+                _contextService.context.SaveChanges();
+            }
+        }
+
+        public void ProfileDelete(int id)
+        {
+            Profile? profile = _contextService.context.Profile
+                .SingleOrDefault(p => p.Id == id);
+
+            if (profile != null)
+            {
+                _contextService.context.Profile.Remove(profile);
+                _contextService.context.SaveChanges();
+            }
         }
     }
 }
