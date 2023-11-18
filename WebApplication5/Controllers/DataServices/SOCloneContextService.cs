@@ -7,17 +7,17 @@ namespace WebApplication5.Controllers.DataServices
 {
     public class SOCloneContextService
     {
-        private readonly StackOverflowCloneContext _context;
+        public readonly StackOverflowCloneContext context;
 
-        public SOCloneContextService(StackOverflowCloneContext context)
+        public SOCloneContextService(StackOverflowCloneContext contextParam)
         {
-            _context = context;
+            context = contextParam;
         }
 
         // profile methods
         public Profile GetProfileById(int id)
         {
-            var profile = _context.Profile
+            var profile = context.Profile
                 .Include(p => p.Questions)
                 .Include(p => p.Answers)
                 .AsNoTracking()
@@ -28,8 +28,8 @@ namespace WebApplication5.Controllers.DataServices
 
         public void CreateProfile(Profile newProfile) 
         {
-            _context.Profile.Add(newProfile);
-            _context.SaveChanges();
+            context.Profile.Add(newProfile);
+            context.SaveChanges();
         }
 
         public void UpdateProfile(Profile newProfile) { }
@@ -42,14 +42,14 @@ namespace WebApplication5.Controllers.DataServices
             IQueryable<Question> questions;
             if (include)
             {
-                questions = _context.Question
+                questions = context.Question
                     .Include(p => p.Tags)
                     .Include(p => p.Author)
                     .AsNoTracking();
             }
             else
             {
-                questions = _context.Question
+                questions = context.Question
                     .AsNoTracking();
             }
 
@@ -58,7 +58,7 @@ namespace WebApplication5.Controllers.DataServices
 
         public Question GetQuestionById(int id)
         {
-            var question = _context.Question
+            var question = context.Question
                 .Include(p => p.Tags)
                 .Include(p => p.Author)
                 .AsNoTracking()
@@ -69,8 +69,8 @@ namespace WebApplication5.Controllers.DataServices
 
         public void CreateQuestion(Question newQuestion)
         {
-            _context.Question.Add(newQuestion);
-            _context.SaveChanges();
+            context.Question.Add(newQuestion);
+            context.SaveChanges();
         }
 
         public void UpdateQuestion(Profile newProfile) { }
@@ -80,7 +80,7 @@ namespace WebApplication5.Controllers.DataServices
         // answer methods
         public IQueryable<Answer> GetAllAnswers()
         {
-            IQueryable<Answer> answers = _context.Answer
+            IQueryable<Answer> answers = context.Answer
                 .Include(a => a.Author)
                 .AsNoTracking();
             
@@ -93,13 +93,13 @@ namespace WebApplication5.Controllers.DataServices
             IQueryable<Tag> tags;
             if (include)
             {
-                tags = _context.Tag
+                tags = context.Tag
                     .Include(p => p.Questions)
                     .AsNoTracking();
             }
             else
             {
-                tags = _context.Tag
+                tags = context.Tag
                     .AsNoTracking();
             }
 
