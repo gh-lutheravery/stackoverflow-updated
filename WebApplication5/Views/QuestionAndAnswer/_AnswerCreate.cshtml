@@ -2,35 +2,27 @@
 
 @* partial view in QuestionAnswer *@
 
-@section Head {
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-}
-
-
 <div class="content-section mt-2">
-    @using (Html.BeginForm("AnswerCreate", "Post", FormMethod.Post, new { @autocomplete = "off" }))
-    {
+    <h3>Give your answer</h3>
+    <form id="form" asp-controller="Answer" asp-action="AnswerCreate" onsubmit="handleAnswerSubmit()">
         @Html.AntiForgeryToken()
 
         <div class="form-group">
-            @* TODO: read bm on adding quill js in asp.net *@
-            <div class="form-group">
-                @Html.LabelFor(m => m.Content, "Content")
-                @Html.LabelFor(m => m.Content, "Elaborate on your title here and what you wanted your code to do.")
-                <div id="editor" class="form-control"></div>
-            </div>
+            <label for="editor">Content</label>
+            <label for="editor">Be sure to answer with an explanation on why your solution works.</label>
+            <div id="editor" class="form-control"></div>
+            <input type="hidden" id="quill-answer-content" asp-for="@Model.Content" />
         </div>
 
         <div class="form-group">
-            <input type="submit" name="submit" class="btn btn-outline-info" value="Submit Question" />
+            <input type="submit" name="submit" class="btn btn-outline-info" value="Submit Answer" />
         </div>
-    }
+    </form>
 </div>
 
 @section Scripts {
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script>
-        var quill = new Quill('#editor', {
+        var answerQuill = new Quill('#editor', {
           modules: {
             toolbar: [
               [{ header: [1, 2, false] }],
@@ -40,5 +32,9 @@
           },
           theme: 'snow'
         });
+
+        function handleAnswerSubmit() {
+            document.getElementById('quill-answer-content').value = JSON.stringify(answerQuill.getContents());
+        }
     </script>
 }

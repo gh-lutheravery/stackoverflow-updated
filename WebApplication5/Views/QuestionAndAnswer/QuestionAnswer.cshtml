@@ -42,14 +42,11 @@
         </div>
     </div>
 
-    @if ((bool)ViewData["IsAuthenticated"])
-    {
-        <div>
-            @Html.ActionLink("Update", "Update", "Question", new { @QuestionId = Model.Question.Id })
-            <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
-            @Html.Partial("~/Shared/DeleteModal.cshtml", Model.DeleteQuestionModel)
-        </div>
-    }
+    <div>
+        @Html.ActionLink("Update", "QuestionUpdate", "Question", new { @QuestionId = Model.Question.Id })
+        <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+        @Html.Partial("~/Shared/DeleteModal.cshtml")
+    </div>
 </article>
 
 <h2 class="article-title">@Model.Answers.Count Answers</h2>

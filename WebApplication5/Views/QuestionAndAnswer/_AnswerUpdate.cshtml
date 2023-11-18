@@ -1,0 +1,39 @@
+﻿@model Answer
+
+@* partial view in QuestionAnswer *@
+
+<div class="content-section mt-2">
+    <h3>Edit answer</h3>
+    <form id="form" asp-controller="Answer" asp-action="AnswerUpdate" onsubmit="handleAnswerUpdateSubmit()">
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <label for="editor">Content</label>
+            <div id="update-editor" class="form-control">@Html.Raw(Model.Content)</div>
+            <input type="hidden" id="quill-answer-update-content" asp-for="@Model.Content" />
+        </div>
+
+        <div class="form-group">
+            <input type="submit" name="submit" class="btn btn-outline-info" value="Update Answer" />
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        var answerUpdateQuill = new Quill('#update-editor', {
+          modules: {
+            toolbar: [
+              [{ header: [1, 2, false] }],
+              ['bold', 'italic', 'underline'],
+              ['image', 'code-block']
+            ]
+          },
+          theme: 'snow'
+        });
+
+        function handleAnswerUpdateSubmit() {
+            document.getElementById('quill-answer-update-content').value = JSON.stringify(answerUpdateQuill.getContents());
+        }
+    </script>
+}
