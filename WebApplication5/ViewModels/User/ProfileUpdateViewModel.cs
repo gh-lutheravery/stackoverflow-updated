@@ -12,12 +12,6 @@ namespace WebApplication5.ViewModels.User
         [EmailAddress]
         public string Email { get; set; }
 
-        [MinLength(8)]
-        public string Password { get; set; }
-
-        [Compare(nameof(Password))]
-        public string ConfirmPassword { get; set; }
-
         [FileExtensions]
         public string? PicturePath { get; set; }
 
