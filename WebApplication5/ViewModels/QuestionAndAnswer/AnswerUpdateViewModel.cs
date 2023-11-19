@@ -5,6 +5,8 @@ namespace WebApplication5.ViewModels.QuestionAndAnswer
 {
     public class AnswerUpdateViewModel
     {
+        [Required]
+        [MaxLength(ValidationConstants.MaxPostContentLength)]
         public string Content { get; set; }
 
         public string TruncatedContent { get; set; }
