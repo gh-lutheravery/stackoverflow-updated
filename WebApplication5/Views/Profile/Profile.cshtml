@@ -19,7 +19,7 @@
                         </div>
                         <div class="media-body">
                             <h5 class="mt-0">@question.Title</h5>
-                            @question.TruncatedContent
+                            <p class="text-muted">@question.TruncatedContent</p>
                             <div class="d-flex justify-content-between prevent-overflow">
                                 @foreach (var tag in @question.Tags)
                                 {
@@ -44,7 +44,7 @@
                             }
                         </div>
                         <div class="media-body">
-                            @answer.TruncatedContent
+                            <p class="text-muted">@answer.TruncatedContent</p>
                         </div>
                     </div>
                 }
