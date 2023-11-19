@@ -1,4 +1,7 @@
-﻿@model QuestionAnswerViewModel
+﻿@using WebApplication5.ViewModels.Shared
+
+@model QuestionAnswerViewModel
+
 
 @Html.Partial("~/Views/Shared/_AskQuestion.cshtml")
 
@@ -35,8 +38,7 @@
         <div class="article-metadata">
             <img class="rounded-circle author-img mr-0" src="@Model.Question.Author.PicturePath">
 
-            @Html.ActionLink(Model.Question.Author.Name, "Profile", "User", 
-                routeValues: new { @ProfileId = Model.Question.Author.Id }, htmlAttributes: new { @class="mr-2" })
+            @Html.ActionLink(Model.Question.Author.Name, "Profile", Model.Question.Author.Id, htmlAttributes: new { @class="mr-2" })
 
             <small class="text-muted ml-auto">@Model.Question.DateCreated</small>
         </div>
@@ -44,8 +46,10 @@
 
     <div>
         @Html.ActionLink("Update", "QuestionUpdate", "Question", new { @QuestionId = Model.Question.Id })
+
         <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
-        @Html.Partial("~/Shared/DeleteModal.cshtml")
+        @Html.Partial("~/Shared/DeleteModal.cshtml", new DeleteModalViewModel() 
+            { Action="DeleteQuestion", DomainName="Question", Controller="Question" } )
     </div>
 </article>
 
@@ -54,39 +58,41 @@
 @{
     foreach (var ans in @Model.Answers)
     {
-    <article class="media content-section mb-5">
-        <div class="d-flex flex-column">
-            <span class="vote">
-                <button class="ans-up-vote"><i class="bi bi-arrow-up-circle-fill"></i></button>
-            </span>
-            <span class="ans-vote-count">@ans.VoteCount</span>
-            <span class="vote">
-                <button class="ans-down-vote"><i class="bi bi-arrow-down-circle-fill"></i></button>
-            </span>
-        </div>
-
-        <div class="media-body">
-            <p class="article-content">@ans.Content</p>
-
-            <div class="article-metadata">
-                <img class="rounded-circle author-img mr-0" src="@ans.Author.PicturePath">
-
-                @Html.ActionLink(ans.Author.Name, "Profile", "User", 
-                    routeValues: new { @ProfileId = Model.Question.Author.Id }, htmlAttributes: new { @class="mr-2" })
-
-                <small class="text-muted ml-auto">@ans.DateCreated</small>
+        <article class="media content-section mb-5">
+            <div class="d-flex flex-column">
+                <span class="vote">
+                    <button class="ans-up-vote"><i class="bi bi-arrow-up-circle-fill"></i></button>
+                </span>
+                <span class="ans-vote-count">@ans.VoteCount</span>
+                <span class="vote">
+                    <button class="ans-down-vote"><i class="bi bi-arrow-down-circle-fill"></i></button>
+                </span>
             </div>
-        </div>
 
-        @if ((bool)ViewData["IsAuthenticated"])
-        {
-            <div>
-                @Html.ActionLink("Update", "Update", "Answer", new { @AnswerId = ans.Id })
-                <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
-                @Html.Partial("~/Shared/DeleteModal.cshtml")
+            <div class="media-body">
+                <p class="article-content">@ans.Content</p>
+
+                <div class="article-metadata">
+                    <img class="rounded-circle author-img mr-0" src="@ans.Author.PicturePath">
+
+                    @Html.ActionLink(ans.Author.Name, "Profile", ans.Author.Id, htmlAttributes: new { @class="mr-2" })
+
+                    <small class="text-muted ml-auto">@ans.DateCreated</small>
+                </div>
             </div>
-        }
-    </article>
+
+            @if (User.Claims.Where(c => c.Value == ans.Author.Id.ToString()).Any())
+            {
+                <div>
+                    <button type="button" class="btn btn-primary btn-sm m-1" data-toggle="modal" data-target="#updateAnswerModal">Update</button>
+                    @Html.Partial("~/QuestionAndAnswer/_AnswerUpdate.cshtml", Model.AnswerUpdateForm)
+
+                    <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                    @Html.Partial("~/Shared/DeleteModal.cshtml", new DeleteModalViewModel()
+                        { Action="DeleteAnswer", DomainName="Answer", Controller="Answer" } )
+                </div>
+            }
+        </article>
     }
 }
 
@@ -97,21 +103,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-        function incrementVoteCount(element, vote) {
-            let voteCount = Number(element.text());
-
-            if (vote) {
-                element.text(
-                    String(voteCount + 1)
-                );
-            }
-            else {
-                element.text(
-                    String(voteCount - 1)
-                );
-            }
-        }
-
         function handleQuestionVote(element, color, vote) {
             // vote is true when upvoting, and vice versa
             element.css('background-color', color);
@@ -148,6 +139,21 @@
                     console.log('Error voting post.');
                 }
             });
+        }
+
+        function incrementVoteCount(element, vote) {
+            let voteCount = Number(element.text());
+
+            if (vote) {
+                element.text(
+                    String(voteCount + 1)
+                );
+            }
+            else {
+                element.text(
+                    String(voteCount - 1)
+                );
+            }
         }
 
         $('#ques-up-vote').click(function(){
