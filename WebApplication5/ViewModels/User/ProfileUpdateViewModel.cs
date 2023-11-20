@@ -31,7 +31,6 @@ namespace WebApplication5.ViewModels.User
         {
             bool equals = this.Name == OriginalProfile.Name && 
                 this.Email == OriginalProfile.Email && 
-                this.Password == OriginalProfile.Password &&
                 this.PicturePath == OriginalProfile.PicturePath &&
                 this.Bio == OriginalProfile.Bio;
 
