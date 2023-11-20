@@ -10,5 +10,9 @@ namespace WebApplication5.Models
         public List<Tag>? Tags { get; set; }
 
         public int ViewCount { get; set; }
+
+        public int AcceptedAnswerId { get; set; }
+
+        public int AnswerCount { get; set; }
     }
 }
