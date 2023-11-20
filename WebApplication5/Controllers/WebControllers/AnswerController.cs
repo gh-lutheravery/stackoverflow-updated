@@ -20,8 +20,7 @@ namespace WebApplication5.Controllers.WebControllers
             if (ModelState.IsValid)
             {
                 _businessController.SubmitAnswerForm(viewModel, User);
-                return RedirectToAction(nameof(QuestionController.QuestionAnswer), nameof(QuestionController),
-                    routeValues: new { Id = viewModel.AssociatedQuestion.Id });
+                return RedirectToAction(viewModel.AssociatedQuestion.Id.ToString(), nameof(QuestionController));
             }
             else
             {

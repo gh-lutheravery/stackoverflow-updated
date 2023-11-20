@@ -14,6 +14,7 @@ namespace WebApplication5.Controllers.WebControllers
             _businessController = businessController;
         }
 
+        [Route("{id}")]
         public ActionResult QuestionAnswer(int id)
         {
             QuestionAnswerViewModel viewModel = _businessController.PopulateQuestionAnswerViewModel(id);
@@ -23,7 +24,7 @@ namespace WebApplication5.Controllers.WebControllers
 
         public ActionResult QuestionCreate()
         {
-            QuestionCreateViewModel vm = new QuestionCreateViewModel();
+            QuestionCreateViewModel vm = new QuestionCreateViewModel(_businessController);
             return View(vm);
         }
 
