@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using WebApplication5.Controllers.DataServices;
 using WebApplication5.Models;
 using WebApplication5.ViewModels;
@@ -24,6 +25,7 @@ namespace WebApplication5.Controllers.BusinessControllers
             vm.Answers = _contextService.GetAllAnswers()
                 .Where(a => a.AssociatedQuestion.Id == vm.Question.Id).ToList();
             vm.AnswerCreateForm = new Answer();
+            vm.AnswerUpdateForm = new AnswerUpdateViewModel();
 
             return vm;
         }
@@ -44,6 +46,8 @@ namespace WebApplication5.Controllers.BusinessControllers
             newQuestion.ViewCount = 0;
             newQuestion.TruncatedContent = questionForm.TruncatedContent;
             newQuestion.DateCreated = DateTime.Now;
+            newQuestion.AcceptedAnswerId = null;
+            newQuestion.AnswerCount = 0;
 
             _contextService.CreateQuestion(newQuestion);
         }
@@ -74,6 +78,23 @@ namespace WebApplication5.Controllers.BusinessControllers
             var question = _contextService.GetQuestionById(id);
 
             _contextService.context.Question.Remove(question);
+            _contextService.context.SaveChanges();
+        }
+
+        public bool ValidateTagStrings(List<string> tags)
+        {
+            IQueryable<Tag> allTags = _contextService.context.Tag.AsNoTracking();
+            IQueryable<string> allStringTags = allTags.Select(t => t.Title);
+
+            if (tags.All(t => allStringTags.Contains(t)))
+                return true;
+            else
+                return false;
+        }
+
+        public void IncrementAnswerCount(int id)
+        {
+            _contextService.context.Question.SingleOrDefault(a => a.Id == id).AnswerCount += 1;
             _contextService.context.SaveChanges();
         }
     }

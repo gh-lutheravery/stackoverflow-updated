@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Security.Claims;
 using WebApplication5.Controllers.DataServices;
 using WebApplication5.Models;
@@ -10,10 +11,11 @@ namespace WebApplication5.Controllers.BusinessControllers
     public class AnswerBusinessController : Controller
     {
         private SOCloneContextService _contextService;
-
-        public AnswerBusinessController(SOCloneContextService context)
+        private QuestionBusinessController _questionBusiness;
+        public AnswerBusinessController(SOCloneContextService context, QuestionBusinessController questionBusiness)
         {
             _contextService = context;
+            _questionBusiness = questionBusiness;
         }
 
         public void SubmitAnswerForm(AnswerCreateViewModel answerForm, ClaimsPrincipal userCookie)
@@ -29,6 +31,8 @@ namespace WebApplication5.Controllers.BusinessControllers
             newAnswer.AssociatedQuestion = answerForm.AssociatedQuestion;
 
             _contextService.context.Answer.Add(newAnswer);
+            _questionBusiness.IncrementAnswerCount(answerForm.AssociatedQuestion.Id);
+            _contextService.context.SaveChanges();
         }
 
         // POST: AnswerAndAnswerController/Create
