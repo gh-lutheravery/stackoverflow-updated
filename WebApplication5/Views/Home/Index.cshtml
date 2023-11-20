@@ -18,10 +18,10 @@
     
     <div class="row align-items-start">
         <div class="col">
-          Sort by Newest
+            <a asp-controller="Home" asp-action="Index" asp-route-sortBy="Newest">Sort by Newest</a>
         </div>
         <div class="col">
-          Sort by Unanswered
+            <a asp-controller="Home" asp-action="Index" asp-route-sortBy="Unanswered">Sort by Unanswered</a>
         </div>
         <div class="col">
             <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
@@ -42,9 +42,10 @@
             </ul>
         </div>
     </div>
-
+    
     <div class="col-7 mr-2">
         @{
+            
             foreach (var question in Model.Questions)
             {
                 <div class="media">
@@ -54,7 +55,7 @@
                     </div>
                     <div class="media-body">
                         <h4 class="mt-0">@question.</h4>
-                        @question.TruncatedContent
+                        <p class="text-muted">@question.TruncatedContent</p>
                         <div class="d-flex justify-content-around prevent-overflow">
                             @foreach (var tag in @question.Tags)
                             {
@@ -66,7 +67,7 @@
             }
         }
         
-        @Html.PagedListPager(Model.Questions, page => Url.Action("Index", "Home", new { page = page }),
+        @Html.PagedListPager(Model.Questions, page => Url.Action("Index", "Home", new { pageNumber = page }),
         new PagedListRenderOptions
         {
             DisplayItemSliceAndTotal = false,
