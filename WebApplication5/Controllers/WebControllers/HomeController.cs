@@ -13,13 +13,13 @@ namespace WebApplication5.Controllers.WebControllers
             _businessController = businessController;
         }
 
-        public ActionResult Index(int pageNumber = 0, string sortBy = "", string filterBy = "")
+        public ActionResult Index(int pageNumber = 1, string sortBy = "", string filterBy = "")
         {
             HomeViewModel vm = _businessController.PopulateHomeViewModel(pageNumber, sortBy, filterBy);
             return View(vm);
         }
 
-        public ActionResult SearchResults(string searchQuery, int pageNumber = 0)
+        public ActionResult Search(string searchQuery, int pageNumber = 1)
         {
             SearchViewModel vm = _businessController.PopulateSearchViewModel(pageNumber, searchQuery);
             return View(vm);
