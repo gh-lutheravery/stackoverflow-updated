@@ -12,7 +12,7 @@
     <div class="d-flex justify-content-between">
         <h1>All Questions</h1>
         <div class="ml-2 mt-auto mb-auto">
-            @Html.Partial("~/Views/Shared/AskQuestion.cshtml")
+            @Html.Partial("~/Views/Shared/_AskQuestion.cshtml")
         </div>
     </div>
     
@@ -24,22 +24,30 @@
             <a asp-controller="Home" asp-action="Index" asp-route-sortBy="Unanswered">Sort by Unanswered</a>
         </div>
         <div class="col">
-            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                Filter by
-            </a>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                    Filter by
+                </button>
 
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                @Html.ActionLink("No answers", "Index", "Home", htmlAttributes: new { @class="dropdown-item" }, routeValues: new { filter="NoAnswers" })
-                @Html.ActionLink("No accepted answers", "Index", "Home", htmlAttributes: new { @class="dropdown-item" }, routeValues: new { filter="NoAcceptedAnswers" })
-                <li>
-                    <br />
-                    <p class="dropdown-item-text">Tags</p>
-                    @using (Html.BeginForm("IndexFilterByTag", "Home", FormMethod.Get))
-                    {
-                        <input class="dropdown-item" name="tagify" id="TagQuery" autofocus>
-                    }
-                </li>
-            </ul>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <li>
+                        @Html.ActionLink("No answers", "Index", "Home", htmlAttributes: new { @class="dropdown-item" }, routeValues: new { filter="NoAnswers" })
+                    </li>
+                    <li>
+                        @Html.ActionLink("No accepted answers", "Index", "Home", htmlAttributes: new { @class="dropdown-item" }, routeValues: new { filter="NoAcceptedAnswers" })
+                    </li>
+                    <li>
+                        <div class="dropdown-item">
+                            <br />
+                            <p class="dropdown-item-text">Tags</p>
+                            @using (Html.BeginForm("IndexFilterByTag", "Home", FormMethod.Get))
+                            {
+                                <input name="tagify" id="TagQuery" autofocus>
+                            }
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
     
@@ -93,6 +101,15 @@
 
 @section Scripts 
 {
+    @*
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    *@
+
+    <script type="text/javascript" src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/@@yaireo/tagify"></script>
 
     <script>
