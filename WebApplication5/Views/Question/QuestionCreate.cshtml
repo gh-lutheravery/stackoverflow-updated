@@ -1,4 +1,5 @@
-﻿@model Question
+﻿@using WebApplication5.ViewModels.QuestionAndAnswer
+@model QuestionCreateViewModel
 
 <h1>Ask a thought-out question to the programming community</h1>
 
@@ -22,6 +23,7 @@
             <label for="editor">Elaborate on your title here and what you wanted your code to do.</label>
             <div id="editor" class="form-control"></div>
             <input type="hidden" id="quill-question-content" asp-for="@Model.Content" />
+            <input type="hidden" id="quill-question-truncated-content" asp-for="@Model.TruncatedContent" />
         </div>
 
         <div class="form-group">
@@ -54,6 +56,7 @@
 
         function handleQuestionSubmit() {
             document.getElementById('quill-question-content').value = JSON.stringify(questionQuill.getContents());
+            document.getElementById('quill-question-truncated-content').value = questionQuill.getText().slice(0, 167) + "...";
             document.getElementById('tags').value = JSON.stringify(tagify.value);
         }
 
