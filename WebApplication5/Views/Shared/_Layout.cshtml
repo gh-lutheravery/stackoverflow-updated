@@ -28,17 +28,17 @@
                     @using (Html.BeginForm("Search", "Home", FormMethod.Get, new { @autocomplete = "off", @class="navbar-nav" }))
                     {
                         @Html.AntiForgeryToken()
-                        <input id="searchQuery" type="text" placeholder="Search All Questions" class="form-control-lg" />
+                        <input name="searchQuery" type="text" placeholder="Search All Questions" class="form-control-lg" />
                     }
                     
-                    @if ((bool)ViewData["IsAuthenticated"])
+                    @if (User.Claims.Any())
                     {
                         <ul class="navbar-nav flex-grow-2">
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Profile">Profile</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Profile" asp-action="@User.FindFirst("ID").Value">Profile</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Logout">Logout</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Profile" asp-action="Logout">Logout</a>
                             </li>
                         </ul>
                     }
@@ -46,10 +46,10 @@
                     {
                         <ul class="navbar-nav flex-grow-2">
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Register">Register</a>
+                                <a class="nav-link text-dark" asp-controller="Profile" asp-action="Register">Register</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Login">Login</a>
+                                <a class="nav-link text-dark" asp-controller="Profile" asp-action="Login">Login</a>
                             </li>
                         </ul>
                     }
