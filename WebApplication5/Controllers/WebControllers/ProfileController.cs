@@ -9,7 +9,6 @@ using WebApplication5.ViewModels.User;
 
 namespace WebApplication5.Controllers.WebControllers
 {
-    [Route("user")]
     public class ProfileController : Controller
     {
         private readonly ProfileBusinessController _businessController;
@@ -61,6 +60,12 @@ namespace WebApplication5.Controllers.WebControllers
             }
         }
 
+        public ActionResult Logout()
+        {
+            HttpContext.SignOutAsync();
+            return RedirectToAction(nameof(HomeController.Index), nameof(HomeController));
+        }
+
 
         public ActionResult Register()
         {
@@ -110,7 +115,7 @@ namespace WebApplication5.Controllers.WebControllers
         public ActionResult Delete(int id)
         {
             _businessController.ProfileDelete(id);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(HomeController.Index), nameof(HomeController));
         }
     }
 }
