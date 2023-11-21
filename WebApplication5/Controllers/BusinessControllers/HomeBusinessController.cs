@@ -32,7 +32,7 @@ namespace WebApplication5.Controllers.BusinessControllers
                 .ToPagedList(pageNumber, _pageSize);
 
             var tags = _context.GetAllTags(false)
-                .Select(t => t.ToString());
+                .Select(t => t.ToString()).ToList();
             vm.RandomTags = RandomizeTags(tags).Take(10).ToList();
 
             if (!sortBy.IsNullOrEmpty() && _sortTypes.Contains(sortBy)) 
@@ -100,20 +100,22 @@ namespace WebApplication5.Controllers.BusinessControllers
             }
         }
 
-        private IQueryable<string> RandomizeTags(IQueryable<string> tags)
+        private List<string> RandomizeTags(List<string> tags)
         {
             Random rand = new Random();
-            var shuffled = tags.OrderBy(a => rand.Next());
+            var shuffled = tags.OrderBy(a => rand.Next()).ToList();
             return shuffled;
         }
 
         public SearchViewModel PopulateSearchViewModel(int pageNumber, string searchTerm)
         {
             SearchViewModel vm = new SearchViewModel();
-            vm = (SearchViewModel)PopulateHomeViewModel(pageNumber);
+            var homeView = PopulateHomeViewModel(pageNumber, "", "");
 
-            vm.Questions.Where(q => q.Title.Contains(searchTerm)).ToList();
+
+            vm.Questions = homeView.Questions.Where(q => q.Title.Contains(searchTerm)).ToPagedList();
             vm.SearchQuery = searchTerm;
+            vm.RandomTags = homeView.RandomTags;
 
             return vm;
         }
