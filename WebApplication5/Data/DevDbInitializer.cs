@@ -7,6 +7,17 @@ using WebApplication5.Models;
 
 namespace WebApplication5.Data
 {
+    public class CsvUser
+    {
+        public string Name { get; set; }
+
+        public string Email { get; set; }
+
+        public string Password { get; set; }
+
+        public string DateCreated { get; set; }
+    }
+
     public static class DevDbInitializer
     {
         // adds random data from stack overflow db file and ai generated csv file for emails and password
@@ -40,8 +51,8 @@ namespace WebApplication5.Data
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "SELECT TOP (100) FROM [StackOverflow2010].[dbo].[Users]";
-                SqlCommand cmd = new SqlCommand(query, connection);
+                string userQuery = "SELECT TOP (100) * FROM [StackOverflow2010].[dbo].[Users]";
+                SqlCommand cmd = new SqlCommand(userQuery, connection);
                 connection.Open();
 
                 // add profile names and dates from stack overflow db
@@ -57,10 +68,10 @@ namespace WebApplication5.Data
                 }
 
                 // add profile emails and passwords from ai generated csv file
-                using (var reader = new StreamReader("filePersons.csv"))
+                using (var reader = new StreamReader("Data/user.csv"))
                 using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
-                    List<Profile> records = csv.GetRecords<Profile>().ToList();
+                    List<CsvUser> records = csv.GetRecords<CsvUser>().ToList();
                     int tally = 0;
 
                     PasswordHasher<Profile> hasher = new PasswordHasher<Profile>();
@@ -74,7 +85,8 @@ namespace WebApplication5.Data
                     }
                 }
 
-                string postQuery = "SELECT TOP (80) FROM [StackOverflow2010].[dbo].[Posts]";
+                string postQuery = "SELECT TOP (80) * FROM [StackOverflow2010].[dbo].[Posts]";
+                cmd = new SqlCommand(postQuery, connection);
 
                 string exampleContent = 
                     @"{""ops"":[{""insert"":""Here is the first paragraph.\n\nList item 1""},{""attributes"":{""list"":""bullet""},""insert"":""\n""},{""insert"":""List item 2""},{""attributes"":{""list"":""bullet""},""insert"":""\n""},{""insert"":""Here's another paragraph, and now an image:\n""},{""insert"":""\n""}]}";
@@ -109,7 +121,7 @@ namespace WebApplication5.Data
                             answer.TruncatedContent = exampleTContent;
                             answer.Author = profiles[tally];
                             answer.VoteCount = reader.GetInt32("Score");
-                            answer.AssociatedQuestion = questions[-1];
+                            answer.AssociatedQuestion = questions.Last();
                             answer.DateCreated = (DateTime)reader["CreationDate"];
                             answers.Add(answer);
                         }
