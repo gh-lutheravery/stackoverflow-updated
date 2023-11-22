@@ -3,7 +3,7 @@
 
 <div class="mr-auto mt-3">
     <h1><b>Account Info</b></h1>
-    <a class="" asp-area="" asp-controller="Profile" asp-action="Detail"><h2>Back to Profile</h2></a>
+    <a class="" asp-area="" asp-controller="Profile" asp-action="@Model.OriginalProfile.Id"><h2>Back to Profile</h2></a>
     @using (Html.BeginForm("Update", "User", FormMethod.Post, new { @autocomplete = "off" }))
     {
         @Html.AntiForgeryToken()
