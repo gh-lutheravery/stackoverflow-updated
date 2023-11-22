@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using WebApplication5.Controllers.BusinessControllers;
+using WebApplication5.Controllers.DataServices;
 using WebApplication5.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +15,22 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
+// db context wrapper
+builder.Services.AddScoped<SOCloneContextService>();
+
+// business logic used by web controllers
+builder.Services.AddScoped<AnswerBusinessController>();
+
+builder.Services.AddScoped<HomeBusinessController>();
+
+builder.Services.AddScoped<ProfileBusinessController>();
+
+builder.Services.AddScoped<QuestionBusinessController>();
+
+
 var app = builder.Build();
+
+app.CreateDevDbIfNotExists();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
