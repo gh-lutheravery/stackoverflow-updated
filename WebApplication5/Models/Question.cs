@@ -11,7 +11,7 @@ namespace WebApplication5.Models
 
         public int ViewCount { get; set; }
 
-        public int AcceptedAnswerId { get; set; }
+        public int? AcceptedAnswerId { get; set; }
 
         public int AnswerCount { get; set; }
     }
