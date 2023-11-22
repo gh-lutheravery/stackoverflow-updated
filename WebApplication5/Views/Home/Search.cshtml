@@ -2,11 +2,11 @@
 @using X.PagedList;
 @using X.PagedList.Web.Common;
 
+@model WebApplication5.ViewModels.Home.SearchViewModel
+
 @{
     ViewData["Title"] = $"\"{Model.SearchQuery}\" Search Results";
 }
-
-@model WebApplication5.ViewModels.Home.SearchViewModel
 
 
 <div class="row align-items-start">
@@ -16,46 +16,48 @@
             @Html.Partial("~/Views/Shared/_AskQuestion.cshtml")
         </div>
     </div>
-    
+
     <div class="row align-items-start">
-        <div class="col">
-          Sort by Newest
-        </div>
-        <div class="col">
-          Sort by Unanswered
-        </div>
+        
     </div>
 
     <div class="col-7 mr-2">
         @{
-            foreach (var question in Model.Questions)
+            if (Model.Questions.Any())
             {
-                <div class="media">
-                    <div class="d-flex flex-column">
-                        <div class="p-2">@question.ViewCount Views</div>
-                        <div class="p-2">@question.VoteCount Votes</div>
-                    </div>
-                    <div class="media-body">
-                        <h4 class="mt-0">@question.Title</h4>
-                        @question.TruncatedContent
-                        <div class="d-flex justify-content-around prevent-overflow">
-                            @foreach (var tag in @question.Tags)
-                            {
-                                <span class="badge bg-blue">@tag</span>
-                            }
+                foreach (var question in Model.Questions)
+                {
+                    <div class="media">
+                        <div class="d-flex flex-column">
+                            <div class="p-2">@question.ViewCount Views</div>
+                            <div class="p-2">@question.VoteCount Votes</div>
+                        </div>
+                        <div class="media-body">
+                            <h4 class="mt-0">@question.Title</h4>
+                            <p class="text-muted">@question.TruncatedContent</p>
+                            <div class="d-flex justify-content-around prevent-overflow">
+                                @foreach (var tag in @question.Tags)
+                                {
+                                    <span class="badge rounded-pill text-bg-dark">@tag.Title</span>
+                                }
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
+            }
+            else
+            {
+                <h4 class="mt-0">No search results found.</h4>
             }
         }
 
-        @Html.PagedListPager(Model.Questions, page => Url.Action("Index", "Home", new { page = page }),
+        @Html.PagedListPager(Model.Questions, page => Url.Action("Search", "Home", new { pageNumber = page, searchQuery = Model.SearchQuery }),
         new PagedListRenderOptions
         {
             DisplayItemSliceAndTotal = false,
             ContainerDivClasses = new [] { "navigation" },
-            LiElementClasses = new string[] { "page-item" }, 
-            PageClasses = new string[] { "page-link" } 
+            LiElementClasses = new string[] { "page-item" },
+            PageClasses = new string[] { "page-link" }
         })
     </div>
 
