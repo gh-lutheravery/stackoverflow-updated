@@ -1,47 +1,76 @@
 ﻿@using WebApplication5.ViewModels.QuestionAndAnswer
 @model QuestionCreateViewModel
 
-<h1>Ask a thought-out question to the programming community</h1>
-
 
 @section Head {
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 }
 
-<div class="content-section ml-auto mr-auto mt-3">
+
+@section OutsideContainer {
+    <section class="hero is-link">
+        <div class="hero-body">
+            <p class="title">
+                Ask a thought-out question to the programming community
+            </p>
+            <p class="subtitle">
+                Question form
+            </p>
+        </div>
+    </section>
+    <h1 class="title is-1"></h1>
+}
+
+<div class="content-section box ml-auto mr-auto mt-3">
     <form id="form" asp-controller="Question" asp-action="QuestionCreate" onsubmit="handleQuestionSubmit()">
         @Html.AntiForgeryToken()
 
-        <div class="form-group">
-            <label for="title">Title</label>
-            <label for="title">Make sure your title is concise and specific.</label>
-            <input class="form-control form-control-lg" type="text" placeholder="Title" />
+        <div class="field">
+            <label class="label" for="title">Title</label>
+            <p>Make sure your title is concise and specific.</p>
+            <div class="control">
+                <input class="input" type="text" placeholder="Title">
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="editor">Content</label>
-            <label for="editor">Elaborate on your title here and what you wanted your code to do.</label>
-            <div id="editor" class="form-control"></div>
-            <input type="hidden" id="quill-question-content" asp-for="@Model.Content" />
-            <input type="hidden" id="quill-question-truncated-content" asp-for="@Model.TruncatedContent" />
+        <div class="field">
+            <label class="label">Content</label>
+            <p>Elaborate on your title here and what you wanted your code to do.</p>
+            <div class="control">
+                <div id="editor" class="content"></div>
+                <input type="hidden" id="quill-question-content" asp-for="@Model.Content" />
+                <input type="hidden" id="quill-question-truncated-content" asp-for="@Model.TruncatedContent" />
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="TagQuery">Tags</label>
-            <label for="TagQuery">Categorize your question by adding up to 5 tags.</label>
-            <input class="dropdown-item" name="tagify" id="TagQuery" autofocus>
+        <div class="field">
+            <label for="TagQuery" class="label">Tags</label>
+            <p>Categorize your question by adding up to 5 tags.</p>
+
+            <div class="control">
+                <select multiple data-type="tags" id="TagQuery" data-placeholder="Choose up to 5 tags">
+                    @foreach (var tag in Model.AllTags)
+                    {
+                        <option value="@tag">@tag</option>
+                    }
+                </select>
+            </div>
             <input type="hidden" id="tags" asp-for="@Model.Tags" />
         </div>
 
-        <div class="form-group">
-            <input type="submit" name="submit" class="btn btn-outline-info" value="Submit Question" />
+        <div class="field is-grouped">
+            <div class="control">
+                <input type="submit" name="submit" class="button is-link" value="Submit Question" />
+            </div>
         </div>
     </form>
 </div>
 
+
 @section Scripts {
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@@yaireo/tagify"></script>
+    @* <script src="https://cdn.jsdelivr.net/npm/@@yaireo/tagify"></script> *@
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@@creativebulma/bulma-tagsinput/dist/js/bulma-tagsinput.min.js"></script>
     <script>
         var questionQuill = new Quill('#editor', {
           modules: {
@@ -60,17 +89,8 @@
             document.getElementById('tags').value = JSON.stringify(tagify.value);
         }
 
-        var tagInput = document.getElementById('input[name=tagify]');
+        var tagInput = document.getElementById('TagQuery');
 
-        // initialize Tagify for tag input
-        var tagify = new Tagify(tagInput);
-        tagify.settings.validate = (tagData) => {
-            if (tagData.value.length > 5) {
-                return "Please enter at most 5 tags.";
-            }
-            else {
-                return true;
-            }
-        }
+        new BulmaTagsInput(tagInput);
     </script>
 }
