@@ -8,66 +8,87 @@
 
 @model WebApplication5.ViewModels.Home.HomeViewModel
 
-<div class="row align-items-start">
-    <div class="d-flex justify-content-between">
-        <h1>All Questions</h1>
-        <div class="ml-2 mt-auto mb-auto">
-            @Html.Partial("~/Views/Shared/_AskQuestion.cshtml")
-        </div>
-    </div>
-    
-    <div class="row align-items-start">
-        <div class="col">
-            <a asp-controller="Home" asp-action="Index" asp-route-sortBy="Newest">Sort by Newest</a>
-        </div>
-        <div class="col">
-            <a asp-controller="Home" asp-action="Index" asp-route-sortBy="Unanswered">Sort by Unanswered</a>
-        </div>
-        <div class="col">
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                    Filter by
-                </button>
+@section Head {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@creativebulma/bulma-tagsinput/dist/css/bulma-tagsinput.min.css" />
+}
 
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                    <li>
-                        @Html.ActionLink("No answers", "Index", "Home", htmlAttributes: new { @class="dropdown-item" }, routeValues: new { filter="NoAnswers" })
-                    </li>
-                    <li>
-                        @Html.ActionLink("No accepted answers", "Index", "Home", htmlAttributes: new { @class="dropdown-item" }, routeValues: new { filter="NoAcceptedAnswers" })
-                    </li>
-                    <li>
-                        <div class="dropdown-item">
-                            <br />
-                            <p class="dropdown-item-text">Tags</p>
-                            @using (Html.BeginForm("IndexFilterByTag", "Home", FormMethod.Get))
-                            {
-                                <input name="tagify" id="TagQuery" autofocus>
-                            }
+<div class="row align-items-start columns">
+    <div class="col-7 mr-2 column is-two-thirds">
+        <div class="d-flex justify-content-between">
+            <h1 class="title is-1">All Questions</h1>
+        </div>
+
+        <div class="row align-items-start is-4 level">
+            <div class="level-left">
+                <div class="field has-addons level-item">
+                    <p class="control">
+                            <a class="button" asp-controller="Home" asp-action="Index" asp-route-sortBy="Newest">Sort by Newest</a>
+                    </p>
+                    <p class="control">
+                            <a class="button" asp-controller="Home" asp-action="Index" asp-route-sortBy="Unanswered">Sort by Unanswered</a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="level-right">
+                <div class="col column">
+                    <div class="dropdown is-hoverable">
+                        <div class="dropdown-trigger">
+                            <button class="button" type="button" id="dropdownMenuLink" aria-haspopup="true" aria-controls="dropdown-menu3"  aria-expanded="false" >
+                                <span class="icon is-small">
+                                    <i class="bi bi-filter-left"></i>
+                                </span>
+                                <span>Filter by</span>
+                                @* <span class="icon is-small">
+                                    <i class="bi bi-arrow-down" aria-hidden="true"></i>
+                                </span> *@
+                            </button>
                         </div>
-                    </li>
-                </ul>
+                        <div class="dropdown-menu" style="width: 20rem" role="menu" aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-content">
+                                <div class="">
+                                    @Html.ActionLink("No answers", "Index", "Home", htmlAttributes: new { @class="dropdown-item" }, routeValues: new { filter="NoAnswers" })
+                                </div>
+                                <div class="">
+                                    @Html.ActionLink("No accepted answers", "Index", "Home", htmlAttributes: new { @class="dropdown-item" }, routeValues: new { filter="NoAcceptedAnswers" })
+                                </div>
+                                <div class="ml-auto mr-auto dropdown-item field">
+                                    <hr class="dropdown-divider">
+                                    
+                                    @using (Html.BeginForm("IndexFilterByTag", "Home", FormMethod.Get))
+                                    {
+                                        <p class="dropdown-item-text">Tags</p>
+                                        <input class="input is-rounded" type="tags" id="TagQuery" autofocus />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <div class="col-7 mr-2">
+
         @{
             
             foreach (var question in Model.Questions)
             {
-                <div class="media">
-                    <div class="d-flex flex-column">
-                        <div class="p-2">@question.ViewCount Views</div>
-                        <div class="p-2">@question.VoteCount Votes</div>
-                    </div>
+                <span style="width: .1rem" class="bg-so">
+                </span>
+                <div class="media box" id="post">
+                    <span class="d-flex flex-column media-rows">
+                        <span class="pl-2 pr-2">@question.ViewCount Views</span>
+                        <span class="pl-2 pr-2">@question.VoteCount Votes</span>
+                    </span>
                     <div class="media-body">
-                        <h4 class="mt-0">@question.Title</h4>
-                        <p class="text-muted">@question.TruncatedContent</p>
+                        <h4 class="mt-0 soc-post-title">
+                            <a asp-controller="Question" asp-action="Details" asp-route-id="@question.Id">@question.Title</a>
+                        </h4>
+
+                        <p class="text-muted has-text-grey">@question.TruncatedContent...</p>
                         <div class="d-flex justify-content-around prevent-overflow">
                             @foreach (var tag in @question.Tags)
                             {
-                                <span class="badge rounded-pill text-bg-dark">@tag.Title</span>
+                                <span class="badge rounded-pill text-bg-dark tag is-warning">@tag.Title</span>
                             }
                         </div>
                     </div>
@@ -79,22 +100,29 @@
         new PagedListRenderOptions
         {
             DisplayItemSliceAndTotal = false,
-            ContainerDivClasses = new [] { "navigation" },
-            LiElementClasses = new string[] { "page-item" }, 
-            PageClasses = new string[] { "page-link" } 
+            UlElementClasses = new [] { "pagination-list" },
+            ContainerDivClasses = new [] { "pagination is-rounded" },
+            ActiveLiElementClass = "pagination-link is-current soc-active-page",
+            LiElementClasses = new string[] { "" }, 
+            PageClasses = new string[] { "pagination-link" },
         })
     </div>
 
-    <div class="col-3">
-        <h1>Random Tags</h1>
-        <ul class="list-unstyled">
+    <div class="col-3 column is-offset-1">
+        <span class="mb-2">
+            @Html.Partial("~/Views/Shared/_AskQuestion.cshtml")
+        </span>
+        <h1 class="subtitle is-3 mt-5">Random Tags</h1>
+        <div class="list-unstyled media-rows">
             @foreach (var tag in Model.RandomTags)
             {
-                <li class="badge rounded-pill bg-blue">
-                    @tag
-                </li>
+                <div class="field">
+                    <span class="badge rounded-pill bg-blue text-bg-dark tag is-info">
+                        @tag
+                    </span>
+                </div>
             }
-        </ul>
+        </div>
     </div>
 </div>
 
@@ -106,16 +134,49 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     *@
 
-    <script type="text/javascript" src="~/lib/jquery/dist/jquery.js"></script>
+    @* <script type="text/javascript" src="~/lib/jquery/dist/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
-    <script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.js"></script> *@
     
-    <script src="https://cdn.jsdelivr.net/npm/@@yaireo/tagify"></script>
+    @* <script src="https://cdn.jsdelivr.net/npm/@@yaireo/tagify"></script> *@
+
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@@creativebulma/bulma-tagsinput/dist/js/bulma-tagsinput.min.js"></script>
 
     <script>
-        var tagInput = document.getElementById('input[name=tagify]');
+        // hack to give active page correct bulma styling  (due to limitations of X.PagedList)
+        let activePage = document.getElementsByClassName('soc-active-page')[0];
+        activePage.firstChild.classList.remove("pagination-link");
 
-        // initialize Tagify for tag filter
-        new Tagify(tagInput);
+        
+        // init tags input for filter dropdown
+        let tagInput = document.querySelector('input[type=tags]');
+        new BulmaTagsInput(tagInput);
     </script>
+
+    
+
+    @* <script>
+        let dropdown = document.querySelector('.dropdown');
+        var isTagifyLoaded = false;
+
+        function initTagify() {
+            let tagInput = document.getElementById('TagQuery');
+
+            // initialize Tagify for tag filter
+            new Tagify(tagInput);
+        }
+
+        dropdown.addEventListener('click', function (event) {
+            event.stopPropagation();
+            this.classList.toggle('is-active');
+            if (this.classList.contains('is-active') && !isTagifyLoaded) {
+                initTagify();
+                isTagifyLoaded = true;
+            }
+           
+        });
+
+        
+    </script> *@
 }
