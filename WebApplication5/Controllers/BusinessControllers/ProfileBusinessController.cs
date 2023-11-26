@@ -21,11 +21,15 @@ namespace WebApplication5.Controllers.BusinessControllers
         }
 
         // GET: QuestionAndAnswerController
-        public Profile? GetProfileWithQA(int id)
+        public Profile? GetProfileWithQA(int? id)
         {
+            if (id == null) 
+                return null;
+
             Profile? profile = _contextService.context.Profile
-                .Include(q => q.Questions)
-                .Include(a => a.Answers)
+                .Include(p => p.Questions)
+                .ThenInclude(q => q.Tags)
+                .Include(p => p.Answers)
                 .SingleOrDefault(p => p.Id == id);
 
             return profile;
