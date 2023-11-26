@@ -27,6 +27,7 @@ builder.Services.AddScoped<ProfileBusinessController>();
 
 builder.Services.AddScoped<QuestionBusinessController>();
 
+builder.Services.AddScoped<TagBusinessController>();
 
 var app = builder.Build();
 
