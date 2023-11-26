@@ -32,7 +32,7 @@ namespace WebApplication5.Controllers.BusinessControllers
                 .ToPagedList(pageNumber, _pageSize);
 
             var tags = _context.GetAllTags(false)
-                .Select(t => t.ToString()).ToList();
+                .Select(t => t.Title).ToList();
             vm.RandomTags = RandomizeTags(tags).Take(10).ToList();
 
             if (!sortBy.IsNullOrEmpty() && _sortTypes.Contains(sortBy)) 
