@@ -35,7 +35,7 @@ namespace WebApplication5.Controllers.WebControllers
             if (ModelState.IsValid)
             {
                 _businessController.UpdateAnswer(viewModel);
-                return RedirectToAction(nameof(QuestionController.QuestionAnswer), nameof(QuestionController),
+                return RedirectToAction(nameof(QuestionController.Details), nameof(QuestionController),
                     routeValues: new { Id = viewModel.AssociatedQuestion.Id });
             }
             else
