@@ -1,81 +1,124 @@
 ﻿@model Profile
 
 
-<div class="row">
-    <div class="col-6" id="tabs">
-        <ul>
-            <li><a href="#q-tabs">Questions</a></li>
-            <li><a href="#a-tabs">Answers</a></li>
-        </ul>
+<div class="row columns">
+    <div class="col-6 column is-three-quarters" id="tabs">
+        <div class="tabs is-large">
+            <ul>
+                <li><a href="#q-tabs">Questions</a></li>
+                <li><a href="#a-tabs">Answers</a></li>
+            </ul>
+        </div>
 
         <div id="q-tabs">
-            @{
-                foreach (var question in Model.Questions)
-                {
-                    <div class="media">
-                        <div class="d-flex flex-column">
-                            <div class="p-2">@question.ViewCount Views</div>
-                            <div class="p-2">@question.VoteCount Votes</div>
-                        </div>
-                        <div class="media-body">
-                            <h5 class="mt-0">@question.Title</h5>
-                            <p class="text-muted">@question.TruncatedContent</p>
-                            <div class="d-flex justify-content-between prevent-overflow">
-                                @foreach (var tag in @question.Tags)
-                                {
-                                    <div class="badge bg-blue">@tag</div>
-                                }
-                            </div>
+            <h4 class="subtitle is-4">Questions</h4>
+            @foreach (var question in Model.Questions)
+            {
+                <div class="media box" id="post">
+                    <span class="d-flex flex-column media-rows">
+                        <span class="pl-2 pr-2">@question.ViewCount Views</span>
+                        <span class="pl-2 pr-2">@question.VoteCount Votes</span>
+                    </span>
+                    <div class="media-body">
+                        <h4 class="mt-0 soc-post-title">
+                            <a asp-controller="Question" asp-action="Details" asp-route-id="@question.Id">@question.Title</a>
+                        </h4>
+
+                        <p class="text-muted has-text-grey">@question.TruncatedContent...</p>
+                        <div class="d-flex justify-content-around prevent-overflow">
+                            @foreach (var tag in @question.Tags)
+                            {
+                                <span class="badge rounded-pill text-bg-dark tag is-warning">@tag.Title</span>
+                            }
                         </div>
                     </div>
-                }
+                </div>
             }
         </div>
         <div id="a-tabs">
-            @{
-                foreach (var answer in Model.Answers)
-                {
-                    <div class="media">
-                        <div class="d-flex flex-column">
-                            <div class="p-2">@answer.VoteCount Votes</div>
-                            @if (answer.IsAccepted)
-                            {
-                                <div class="p-2">This answer was accepted.</div>
-                            }
-                        </div>
-                        <div class="media-body">
-                            <p class="text-muted">@answer.TruncatedContent</p>
-                        </div>
+            <h4 class="subtitle is-4">Answers</h4>
+            @foreach (var answer in Model.Answers)
+            {
+                <div class="media box" id="post">
+                    <span class="d-flex flex-column media-rows">
+                        <span class="pl-2 pr-2">@answer.VoteCount Votes</span>
+                        @if (answer.IsAccepted)
+                        {
+                            <span class="pl-2 pr-2">This answer was accepted.</span>
+                        }
+                    </span>
+                    <div class="media-body">
+                        <p class="text-muted has-text-grey">@answer.TruncatedContent...</p>
                     </div>
-                }
+                </div>
             }
         </div>
     </div>
     
-    <div class="col-4">
-        <div class="card">
-            <img class="card-img-top" src="@Model.PicturePath" alt="Profile Picture">
-            <div class="card-body">
-                <div class="d-flex">
-                    <h5 class="card-title">@Model.Name</h5>
-                    <h6 class="card-title text-muted">@Model.Email</h6>
-                    @if ((bool)ViewData["IsAuthenticated"])
-                    {
-                        <a class="btn btn-dark" asp-area="" asp-controller="User" asp-action="Update">Update</a>
-                        <button type="button" class="btn btn-outline-dark btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
-                    }
+    <div class="col-4 column">
+        <div class="card" style="margin: .5em 1em;">
+            @if (User.Claims.Any(c => c.Value == Model.Id.ToString()))
+            {
+                <form asp-controller="Profile" asp-action="ProfileUpdate">
+                    @Html.AntiForgeryToken()
+
+                    <div class="field">
+                        <label class="label" for="Username">Username</label>
+                        <div class="control">
+                            <input class="input" type="text" name="Username" asp-for="@Model.Name" />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label" for="email">Email</label>
+                        <div class="control">
+                            <input class="input" type="text" name="email" asp-for="@Model.Email" />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label" for="bio">Bio</label>
+                        <div class="control">
+                            <textarea name="bio" rows="4" cols="50" asp-for="@Model.Bio"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <input type="submit" name="submit" class="button is-link" value="Update" />
+                        </div>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <header class="card-header">
+                    <p class="card-header-title">
+                        @Model.Name
+                    </p>
+                </header>
+                <div class="card-content">
+                    <div class="content">
+                        @if (Model.Bio != null)
+                        {
+                            <h4 class="subtitle">About</h4>
+                            @Model.Bio
+                        }
+                    
+                        <p><strong>Contact</strong></p>
+                        <p>@Model.Email</p>
+
+                        <p>Joined at: @Model.DateCreated.ToString()</p>
+                    </div>
                 </div>
-                
-                <p class="card-text">@Model.Bio</p>
-                <p class="card-text"><small class="text-muted">@Model..ToString()</small></p>
-            </div>
+            }
         </div>
     </div>
 </div>
 
 
 @section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script type="text/javascript" src="~/lib/jquery/dist/jquery.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 
     <script>
