@@ -8,23 +8,26 @@ namespace WebApplication5.Controllers.WebControllers
 {
     public class QuestionController : Controller
     {
-        private readonly QuestionBusinessController _businessController;
-        public QuestionController(QuestionBusinessController businessController)
+        private readonly QuestionBusinessController _questionBusinessController;
+        private readonly TagBusinessController _tagBusinessController;
+        public QuestionController(QuestionBusinessController questionBusinessController, TagBusinessController tagBusinessController)
         {
-            _businessController = businessController;
+            _questionBusinessController = questionBusinessController;
+            _tagBusinessController = tagBusinessController;
         }
 
-        [Route("{id}")]
-        public ActionResult QuestionAnswer(int id)
+        public ActionResult Details(int id)
         {
-            QuestionAnswerViewModel viewModel = _businessController.PopulateQuestionAnswerViewModel(id);
-            return View(viewModel);
+            QuestionAnswerViewModel viewModel = _questionBusinessController.PopulateQuestionAnswerViewModel(id);
+            return View("QuestionAnswer", viewModel);
         }
 
 
         public ActionResult QuestionCreate()
         {
-            QuestionCreateViewModel vm = new QuestionCreateViewModel(_businessController);
+            QuestionCreateViewModel vm = new QuestionCreateViewModel(_questionBusinessController);
+
+            vm.AllTags = _tagBusinessController.GetAllTagStrings();
             return View(vm);
         }
 
@@ -35,13 +38,21 @@ namespace WebApplication5.Controllers.WebControllers
         {
             if (ModelState.IsValid)
             {
-                _businessController.SubmitQuestionForm(viewModel, User);
-                return RedirectToAction(nameof(QuestionAnswer));
+                _questionBusinessController.SubmitQuestionForm(viewModel, User);
+                return RedirectToAction(nameof(Details));
             }
             else
             {
                 return View(viewModel);
             }
+        }
+
+        public ActionResult QuestionUpdate(int id)
+        {
+            QuestionUpdateViewModel vm = new QuestionUpdateViewModel();
+            vm.OriginalQuestion = _questionBusinessController.GetQuestion(id);
+
+            return View(vm);
         }
 
         [HttpPost]
@@ -50,8 +61,8 @@ namespace WebApplication5.Controllers.WebControllers
         {
             if (ModelState.IsValid)
             {
-                _businessController.UpdateQuestion(viewModel);
-                return RedirectToAction(nameof(QuestionAnswer));
+                _questionBusinessController.UpdateQuestion(viewModel);
+                return RedirectToAction(nameof(Details));
             }
             else
             {
@@ -63,7 +74,7 @@ namespace WebApplication5.Controllers.WebControllers
         [ValidateAntiForgeryToken]
         public ActionResult QuestionDelete(int questionId)
         {
-            _businessController.DeleteQuestion(questionId);
+            _questionBusinessController.DeleteQuestion(questionId);
             return RedirectToAction(nameof(Index));
         }
     }
