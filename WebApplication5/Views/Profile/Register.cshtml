@@ -1,47 +1,59 @@
 ﻿@model WebApplication5.ViewModels.User.RegisterViewModel
 
 
-<div class="content-section ml-auto mr-auto mt-3">
-    <h1><b>Join the community</b></h1>
-    @using (Html.BeginForm("Register", "User", FormMethod.Post, new { @autocomplete = "off" }))
-    {
+<div class="content-section box ml-auto mr-auto mt-6 is-justify-content-center" style="width: 50%">
+    <h1 class="title is-3">Join the community</h1>
+    <form asp-controller="Profile" asp-action="Register">
         @Html.AntiForgeryToken()
-        <div class="form-group">
-            @Html.LabelFor(m => m.Name, "Username")
-            @Html.TextBoxFor(m => m.Name, "", new { @class = "form-control form-control-lg", 
-                @type = "text", @placeholder = "Username" 
-            })
+
+        <div class="field">
+            <label class="label" for="Username">Username</label>
+            <div class="control">
+                <input class="input" type="text" name="Username" asp-for="Name" />
+            </div>
+            <div class="alert alert-warning" role="alert">
+                @Html.ValidationMessageFor(m => m.Name)
+            </div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.Email, "Email")
-            @Html.TextBoxFor(m => m.Email, "", new { @class = "form-control form-control-lg", 
-                @type = "text", @placeholder = "Email" 
-            })
+        <div class="field">
+            <label class="label" for="email">Email</label>
+            <div class="control">
+                <input class="input" type="text" name="email" asp-for="Email" />
+            </div>
+            <div class="alert alert-warning" role="alert">
+                @Html.ValidationMessageFor(m => m.Email)
+            </div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.Password, "Password")
-            @Html.TextBoxFor(m => m.Password, "", new { @class = "form-control form-control-lg", 
-                @type = "text", @placeholder = "Password" 
-            })
+        <div class="field">
+            <label class="label" for="Password">Password</label>
+            <div class="control">
+                <input class="input" type="text" name="Password" asp-for="Password" />
+            </div>
+            <div class="alert alert-warning" role="alert">
+                @Html.ValidationMessageFor(m => m.Password)
+            </div>
         </div>
 
-        <div class="form-group">
-            @Html.Label("Confirm Password")
-            @Html.TextBoxFor(m => m.ConfirmPassword, "", new { @class = "form-control form-control-lg", 
-                @type = "text", @placeholder = "Repeat your password" 
-            })
+        <div class="field">
+            <label class="label" for="confirm-password">Confirm Password</label>
+            <div class="control">
+                <input class="input" type="text" name="confirm-password" asp-for="ConfirmPassword" />
+            </div>
+            <div class="alert alert-warning" role="alert">
+                @Html.ValidationMessageFor(m => m.ConfirmPassword)
+            </div>
         </div>
 
-        <div class="form-group m-auto">
-            <input type="submit" name="submit" class="btn btn-outline-info" value="Register" />
+        <div class="field is-grouped">
+            <div class="control">
+                <input type="submit" name="submit" class="button is-link" value="Sign up" />
+            </div>
         </div>
-    }
+    </form>
 
-    <div class="border-top pt-3">
-        <small class="text-muted">
-            Already have an account? @Html.ActionLink("Sign in here", "Login", "User", htmlAttributes: new { @class="ml-2" })
-        </small>
-    </div>
+    <small class="text-muted">
+        Already have an account? @Html.ActionLink("Sign in here", "Login", "Profile", htmlAttributes: new { @class="ml-2" })
+    </small>
 </div>
