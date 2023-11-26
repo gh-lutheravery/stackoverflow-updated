@@ -16,22 +16,20 @@ namespace WebApplication5.Controllers.WebControllers
         {
             _businessController = businessController;
         }
-
-        [Route("{id}")]
-        public ActionResult Profile(int id)
+        public ActionResult Details(int id)
         {
             var profile = _businessController.GetProfileWithQA(id);
             if (profile is null)
                 return NotFound();
 
-            return View(profile);
+            return View("Profile", profile);
             
         }
 
         public ActionResult Login()
         {
             LoginViewModel viewModel = new LoginViewModel();
-            return View(viewModel);
+            return View("Login", viewModel);
         }
 
         [HttpPost]
@@ -52,7 +50,8 @@ namespace WebApplication5.Controllers.WebControllers
                     new ClaimsPrincipal(claims),
                     authProperties);
 
-                return RedirectToAction(nameof(Profile));
+                string userId = claims.Claims.Single().Value;
+                return RedirectToAction(nameof(Details), routeValues: userId);
             }
             else
             {
@@ -63,7 +62,7 @@ namespace WebApplication5.Controllers.WebControllers
         public ActionResult Logout()
         {
             HttpContext.SignOutAsync();
-            return RedirectToAction(nameof(HomeController.Index), nameof(HomeController));
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
 
