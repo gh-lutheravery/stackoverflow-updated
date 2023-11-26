@@ -3,8 +3,6 @@
 @model QuestionAnswerViewModel
 
 
-@Html.Partial("~/Views/Shared/_AskQuestion.cshtml")
-
 @section Head 
 {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -12,168 +10,184 @@
 }
 
 
-<article class="media content-section mb-5">
-    <div class="d-flex flex-column">
-        <!-- use bootstrap icons for up/down arrows -->
-        <span class="vote">
-            <button id="ques-up-vote"><i class="bi bi-arrow-up-circle-fill"></i></button>
-        </span>
-        <span id="ques-vote-count" class="vote-count">@Model.Question.VoteCount</span>
-        <span class="vote">
-            <button id="ques-down-vote"><i class="bi bi-arrow-down-circle-fill"></i></button>
-        </span>
-    </div>
-
-    <div class="media-body">
-        <h2 class="article-title">@Model.Question.Title</h2>
-        <div class="article-content">@Model.Question.Content</div>
-
-        <div class="row align-items-start">
-            @foreach (var tag in Model.Question.Tags)
-            {
-                <span class="col badge bg-blue">@tag</span>
-            }
-        </div>
-
-        <div class="article-metadata">
-            <img class="rounded-circle author-img mr-0" src="@Model.Question.Author.PicturePath">
-
-            @Html.ActionLink(Model.Question.Author.Name, "Profile", Model.Question.Author.Id, htmlAttributes: new { @class="mr-2" })
-
-            <small class="text-muted ml-auto">@Model.Question.DateCreated</small>
-        </div>
-    </div>
-
-    <div>
-        @Html.ActionLink("Update", "QuestionUpdate", "Question", new { @QuestionId = Model.Question.Id })
-
-        <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
-        @Html.Partial("~/Shared/_DeleteModal.cshtml", new DeleteModalViewModel() 
-            { Action="DeleteQuestion", DomainName="Question", Controller="Question" } )
-    </div>
-</article>
-
-<h2 class="article-title">@Model.Answers.Count Answers</h2>
-
 @{
-    foreach (var ans in @Model.Answers)
-    {
-        <article class="media content-section mb-5">
-            <div class="d-flex flex-column">
-                <span class="vote">
-                    <button class="ans-up-vote"><i class="bi bi-arrow-up-circle-fill"></i></button>
-                </span>
-                <span class="ans-vote-count">@ans.VoteCount</span>
-                <span class="vote">
-                    <button class="ans-down-vote"><i class="bi bi-arrow-down-circle-fill"></i></button>
-                </span>
-            </div>
-
-            <div class="media-body">
-                <p class="article-content">@ans.Content</p>
-
-                <div class="article-metadata">
-                    <img class="rounded-circle author-img mr-0" src="@ans.Author.PicturePath">
-
-                    @Html.ActionLink(ans.Author.Name, "Profile", ans.Author.Id, htmlAttributes: new { @class="mr-2" })
-
-                    <small class="text-muted ml-auto">@ans.DateCreated</small>
-                </div>
-            </div>
-
-            @if (User.Claims.Where(c => c.Value == ans.Author.Id.ToString()).Any())
-            {
-                Model.AnswerUpdateForm.AssociatedQuestion = Model.Question;
-                Model.AnswerUpdateForm.OriginalAnswer = ans;
-                
-                <div>
-                    <button type="button" class="btn btn-primary btn-sm m-1" data-toggle="modal" data-target="#updateAnswerModal">Update</button>
-                    @Html.Partial("~/QuestionAndAnswer/_AnswerUpdate.cshtml", Model.AnswerUpdateForm)
-
-                    <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
-                    @Html.Partial("~/Shared/_DeleteModal.cshtml", new DeleteModalViewModel()
-                        { Action="DeleteAnswer", DomainName="Answer", Controller="Answer" } )
-                </div>
-            }
-        </article>
-    }
+    // init variables for delete modal id names, used by trigger buttons to open the corresponding modal
+    string deleteQuestionModalName = "delete-modal-" + "Question";
+    string deleteAnswerModalName = "delete-modal-" + "Answer";
 }
 
-@Html.Partial("_AnswerCreate.cshtml", Model.AnswerCreateForm)
+
+<div class="row align-items-start columns">
+    <div class="col-7 mr-2 column is-three-quarters">
+        <article class="media mt-5 box has-background-white" style="align-items: stretch; ">
+            <figure class="media-left" style="padding-top: .5rem;">
+                <div class="d-flex flex-column media-rows">
+                    <!-- use bootstrap icons for up/down arrows -->
+                    <span class="vote">
+                        <button  class="button" id="ques-up-vote"><i class="bi bi-arrow-up-circle-fill"></i></button>
+                    </span>
+                    <span id="ques-vote-count" class="vote-count ml-auto mr-auto"><strong>@Model.Question.VoteCount</strong></span>
+                    <span class="vote">
+                        <button class="button" id="ques-down-vote"><i class="bi bi-arrow-down-circle-fill"></i></button>
+                    </span>
+                </div>
+            </figure>
+
+
+            <div class="media-content" >
+                <div class="condtent mb-4">
+                    <p>
+                        <h1 class="title is-2" style="margin-bottom: 0">@Model.Question.Title</h1>
+                        <hr style="margin: 1px">
+                        <div class="content post-view" id="question-view">@Html.Raw(Model.Question.Content)</div>
+
+                        <div class="d-flex justify-content-around prevent-overflow">
+                            @foreach (var tag in Model.Question.Tags)
+                            {
+                                <span class="badge rounded-pill text-bg-dark tag is-warning">@tag.Title</span>
+                            }
+                        </div>
+                    </p>
+                </div>
+
+                <nav class="level is-mobile media">
+                    <div class="level-left">
+                        @Html.ActionLink(Model.Question.Author.Name, "Details", "Profile", routeValues: new { @id=Model.Question.Author.Id }, 
+                            htmlAttributes: new { @class="mr-4 level-item" })
+
+                        <small class="text-muted ml-auto level-item">Created at:  @Model.Question.DateCreated</small>
+                    </div>
+                    @if (User.Claims.Any(c => c.Value == Model.Question.Author.Id.ToString()))
+                    {
+                        <div class="level-right">
+                            <a class="button mr-2" asp-controller="Question" asp-action="QuestionUpdate" asp-route-id="@Model.Question.Id">Update</a>
+                            <button type="button" class="button is-danger" data-toggle="modal" data-target="#@deleteQuestionModalName">Delete</button>
+                            @Html.Partial("~/Views/Shared/_DeleteModal.cshtml", new DeleteModalViewModel()
+                                { Action="DeleteQuestion", DomainName="Question", Controller="Question" } )
+                        </div>
+                
+                    }
+                </nav>
+            </div>
+        </article>
+
+        <h2 class="title is-3">@Model.Answers.Count Answers</h2>
+
+        <ul id="answer-list">
+            @foreach (var ans in Model.Answers)
+            {
+                <li>
+                    <article class="media mt-5 box has-background-white" style="align-items: stretch; ">
+                        <figure class="media-left" style="padding-top: .5rem;">
+                            <div class="d-flex flex-column media-rows">
+                                <!-- use bootstrap icons for up/down arrows -->
+                                <span class="vote">
+                                    <button class="button ans-up-vote"><i class="bi bi-arrow-up-circle-fill"></i></button>
+                                </span>
+                                <span class="vote-count ml-auto mr-auto"><strong>@ans.VoteCount</strong></span>
+                                <span class="vote">
+                                    <button class="button ans-down-vote"><i class="bi bi-arrow-down-circle-fill"></i></button>
+                                </span>
+                            </div>
+                        </figure>
+
+
+                        <div class="media-content">
+                            <div class="condtent mb-4">
+                                <p>
+                                    <div class="content post-view soc-answer">@Html.Raw(ans.Content)</div>
+                                </p>
+                            </div>
+
+                            <nav class="level is-mobile media">
+                                <div class="level-left">
+                                    @Html.ActionLink(ans.Author.Name, "Details", "Profile", routeValues: new { @id=ans.Author.Id },
+                                htmlAttributes: new { @class="mr-4 level-item" })
+
+                                    <small class="text-muted ml-auto level-item">Created at:  @ans.DateCreated</small>
+                                </div>
+                                @if (User.Claims.Any(c => c.Value == ans.Author.Id.ToString()))
+                                {
+                                    Model.AnswerUpdateForm.AssociatedQuestion = Model.Question;
+                                    Model.AnswerUpdateForm.OriginalAnswer = ans;
+
+                                    <div class="level-right">
+                                        <button type="button" class="btn btn-primary btn-sm m-1 open-modal-trigger" data-target="#answer-update-modal">Update</button>
+                                        @Html.Partial("~/Views/Answer/_AnswerUpdate.cshtml", Model.AnswerUpdateForm)
+
+                                        <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#@deleteAnswerModalName">Delete</button>
+                                        @Html.Partial("~/Views/Shared/_DeleteModal.cshtml", new DeleteModalViewModel()
+                                            { Action="DeleteAnswer", DomainName="Answer", Controller="Answer" } )
+                                    </div>
+
+                                }
+                            </nav>
+                        </div>
+                    </article>
+                </li>
+            }
+        </ul>
+
+        @Html.Partial("~/Views/Answer/_AnswerCreate.cshtml", Model.AnswerCreateForm)
+    </div>
+
+    <div class="col-3 column mt-5">
+        <span class="mb-2">
+            @Html.Partial("~/Views/Shared/_AskQuestion.cshtml")
+        </span>
+        <h1 class="subtitle is-3 mt-5">Tags used in this post</h1>
+        <div class="list-unstyled media-rows">
+            @foreach (var tag in Model.Question.Tags)
+            {
+                <div class="field">
+                    <span class="badge rounded-pill bg-blue text-bg-dark tag is-info">
+                        @tag.Title
+                    </span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
 
 @section Scripts 
 {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="~/js/site.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
 
     <script>
-        function handleQuestionVote(element, color, vote) {
-            // vote is true when upvoting, and vice versa
-            element.css('background-color', color);
+        // init question rich text
+        const questionViewQuill = new Quill('#question-view', {
+            modules: { toolbar: false },
+            theme: 'snow'
+        });
 
-            incrementVoteCount($('#ques-vote-count'), vote);
-
-            $.ajax({
-                url: '@Url.Action("UpdateVote", "Question")',
-                method: 'POST',
-                data: { questionId: @Model.Question.Id, upVote: vote },
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                error: function() {
-                    console.log('Error voting post.');
-                }
-            });
+        // init answer rich text
+        const answerList = document.getElementsByClassName('soc-answer');
+        for (let answer of answerList) {
+            new Quill(answer, {
+                modules: { toolbar: false },
+                theme: 'snow'
+            })
         }
 
-        function handleAnswerVote(element, color, vote) {
-            element.css('background-color', color);
+        // init answer form editor
+        var newAnswerQuill = new Quill('#new-answer-editor', {
+            modules: {
+                toolbar: [
+                    [{ header: [1, 2, false] }],
+                    ['bold', 'italic', 'underline'],
+                    ['image', 'code-block']
+                ]
+            },
+            theme: 'snow'
+        });
 
-            let voteContainer = element.parent().parent();
-            let voteCountEl = voteContainer.children('.ans-vote-count')[0];
-
-            incrementVoteCount(voteCountEl, vote);
-
-            $.ajax({
-                url: '@Url.Action("UpdateVote", "Answer")',
-                method: 'POST',
-                data: { answerId: @Model.Question.Id, upVote: vote },
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                error: function() {
-                    console.log('Error voting post.');
-                }
-            });
+        function handleNewAnswerSubmit() {
+            document.getElementById('quill-new-answer-content').value = JSON.stringify(newAnswerQuill.getContents());
+            document.getElementById('quill-new-answer-truncated-content').value = newAnswerQuill.getText().slice(0, 167) + "...";
         }
-
-        function incrementVoteCount(element, vote) {
-            let voteCount = Number(element.text());
-
-            if (vote) {
-                element.text(
-                    String(voteCount + 1)
-                );
-            }
-            else {
-                element.text(
-                    String(voteCount - 1)
-                );
-            }
-        }
-
-        $('#ques-up-vote').click(function(){
-            handleQuestionVote($(this), "#0066ffff", true)
-        });
-
-        $('#ques-down-vote').click(function(){
-            handleQuestionVote($(this), "#42414cff", false)
-        });
-
-        $('.ans-up-vote').click(function(){
-            handleAnswerVote($(this), "#0066ffff", true)
-        });
-
-        $('.ans-down-vote').click(function(){
-            handleAnswerVote($(this), "#42414cff", false)
-        });
     </script>
 }
 
