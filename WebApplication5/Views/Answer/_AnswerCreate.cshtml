@@ -2,41 +2,25 @@
 
 @* partial view in QuestionAnswer *@
 
-<div class="content-section mt-2">
-    <h3>Give your answer</h3>
-    <form id="form" asp-controller="Answer" asp-action="AnswerCreate" onsubmit="handleAnswerSubmit()">
+<div class="content-section box mt-3">
+    <h3 class="title is-4">Give your answer</h3>
+    <form id="form" asp-controller="Answer" asp-action="AnswerCreate" onsubmit="handleNewAnswerSubmit()">
         @Html.AntiForgeryToken()
 
-        <div class="form-group">
-            <label for="editor">Content</label>
-            <label for="editor">Be sure to answer with an explanation on why your solution works.</label>
-            <div id="editor" class="form-control"></div>
-            <input type="hidden" id="quill-answer-content" asp-for="@Model.Content" />
-            <input type="hidden" id="quill-answer-truncated-content" asp-for="@Model.TruncatedContent" />
+        <div class="field">
+            <label class="label">Content</label>
+            <p>Be sure to answer with an explanation on why your solution works.</p>
+            <div class="control">
+                <div id="new-answer-editor" class="content"></div>
+                <input type="hidden" id="quill-new-answer-content" asp-for="@Model.Content" />
+                <input type="hidden" id="quill-new-answer-truncated-content" asp-for="@Model.TruncatedContent" />
+            </div>
         </div>
 
-        <div class="form-group">
-            <input type="submit" name="submit" class="btn btn-outline-info" value="Submit Answer" />
+        <div class="field is-grouped">
+            <div class="control">
+                <input type="submit" name="submit" class="button is-link" value="Submit Answer" />
+            </div>
         </div>
     </form>
 </div>
-
-@section Scripts {
-    <script>
-        var answerQuill = new Quill('#editor', {
-          modules: {
-            toolbar: [
-              [{ header: [1, 2, false] }],
-              ['bold', 'italic', 'underline'],
-              ['image', 'code-block']
-            ]
-          },
-          theme: 'snow'
-        });
-
-        function handleAnswerSubmit() {
-            document.getElementById('quill-answer-content').value = JSON.stringify(answerQuill.getContents());
-            document.getElementById('quill-answer-truncated-content').value = answerQuill.getText().slice(0, 167) + "...";
-        }
-    </script>
-}
