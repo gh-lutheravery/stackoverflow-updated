@@ -14,5 +14,69 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: ghostwhite;
+}
+.media-rows {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    line-height: 2.5;
+}
+
+.bg-so {
+    background-color: #FF9900;
+}
+
+.bg-so-light {
+    background-color: #ffdba5;
+}
+
+.text-so {
+    color: #FF9900;
+}
+
+.text-dark-so {
+    color: #e08600;
+}
+
+.soc-container {
+    background-color: lightgray;
+}
+
+.soc-post-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.gr-footer {
+    margin-top: 100px;
+    text-align: center;
+    margin-bottom: 100px;
+}
+
+    .gr-footer a::after {
+        content: '  ';
+        padding: 0 0.5rem;
+    }
+
+.gr-footer-item {
+    font-size: 1.5rem;
+    color: #212529;
+}
+
+#post {
+    
+}
+
+#post:hover {
+    transition: all 0.5s ease-in-out;
+}
+
+.vote i {
+    font-size: 1.8rem;
+}
+
+.post-view {
+    border: none !important;
 }
