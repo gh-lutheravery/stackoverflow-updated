@@ -9,68 +9,105 @@
 }
 
 
-<div class="row align-items-start">
-    <div class="d-flex justify-content-between">
-        <h1>Search Results</h1>
-        <div class="ml-2 mt-auto mb-auto">
-            @Html.Partial("~/Views/Shared/_AskQuestion.cshtml")
+@section Head {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@creativebulma/bulma-tagsinput/dist/css/bulma-tagsinput.min.css" />
+}
+
+<div class="row align-items-start columns">
+    <div class="col-7 mr-2 column is-two-thirds">
+        <div class="d-flex justify-content-between">
+            <h1 class="title is-1">Search Results</h1>
         </div>
-    </div>
 
-    <div class="row align-items-start">
-        
-    </div>
+        <div class="row align-items-start is-4 level">
+            <div class="level-left">
+                <div class="field has-addons level-item">
+                    <p class="control">
+                        <a class="button" asp-controller="Home" asp-action="Search" asp-route-sortBy="Newest">Sort by Newest</a>
+                    </p>
+                    <p class="control">
+                        <a class="button" asp-controller="Home" asp-action="Search" asp-route-sortBy="Unanswered">Sort by Unanswered</a>
+                    </p>
+                </div>
+            </div>
+        </div>
 
-    <div class="col-7 mr-2">
         @{
             if (Model.Questions.Any())
             {
                 foreach (var question in Model.Questions)
                 {
-                    <div class="media">
-                        <div class="d-flex flex-column">
-                            <div class="p-2">@question.ViewCount Views</div>
-                            <div class="p-2">@question.VoteCount Votes</div>
-                        </div>
+                    <div class="media box" id="post">
+                        <span class="d-flex flex-column media-rows">
+                            <span class="pl-2 pr-2">@question.ViewCount Views</span>
+                            <span class="pl-2 pr-2">@question.VoteCount Votes</span>
+                        </span>
                         <div class="media-body">
-                            <h4 class="mt-0">@question.Title</h4>
-                            <p class="text-muted">@question.TruncatedContent</p>
+                            <h4 class="mt-0 soc-post-title">@question.Title</h4>
+                            <p class="text-muted has-text-grey">@question.TruncatedContent...</p>
                             <div class="d-flex justify-content-around prevent-overflow">
                                 @foreach (var tag in @question.Tags)
                                 {
-                                    <span class="badge rounded-pill text-bg-dark">@tag.Title</span>
+                                    <span class="badge rounded-pill text-bg-dark tag is-warning">@tag.Title</span>
                                 }
                             </div>
-                        </div>
                     </div>
+                </div>
                 }
+
+                @Html.PagedListPager(Model.Questions, page => Url.Action("Index", "Home", new { pageNumber = page }),
+                new PagedListRenderOptions
+                {
+                    DisplayItemSliceAndTotal = false,
+                    UlElementClasses = new [] { "pagination-list" },
+                    ContainerDivClasses = new [] { "pagination is-rounded" },
+                    ActiveLiElementClass = "pagination-link is-current soc-active-page",
+                    LiElementClasses = new string[] { "" },
+                    PageClasses = new string[] { "pagination-link" },
+                })
             }
+
             else
             {
                 <h4 class="mt-0">No search results found.</h4>
             }
         }
-
-        @Html.PagedListPager(Model.Questions, page => Url.Action("Search", "Home", new { pageNumber = page, searchQuery = Model.SearchQuery }),
-        new PagedListRenderOptions
-        {
-            DisplayItemSliceAndTotal = false,
-            ContainerDivClasses = new [] { "navigation" },
-            LiElementClasses = new string[] { "page-item" },
-            PageClasses = new string[] { "page-link" }
-        })
     </div>
 
-    <div class="col-3">
-        <h1>Random Tags</h1>
-        <ul class="list-unstyled">
+    <div class="col-3 column is-offset-1">
+        <span class="mb-2">
+            @Html.Partial("~/Views/Shared/_AskQuestion.cshtml")
+        </span>
+
+        <h1 class="subtitle is-3 mt-5">Random Tags</h1>
+        <div class="list-unstyled media-rows">
             @foreach (var tag in Model.RandomTags)
             {
-                <li class="badge rounded-pill bg-blue">
-                    @tag
-                </li>
+                <div class="field">
+                    <span class="badge rounded-pill bg-blue text-bg-dark tag is-info">
+                        @tag
+                    </span>
+                </div>
             }
-        </ul>
+        </div>
     </div>
 </div>
+
+
+@section Scripts
+    {
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@@creativebulma/bulma-tagsinput/dist/js/bulma-tagsinput.min.js"></script>
+
+    <script>
+        // hack to give active page correct bulma styling  (due to limitations of X.PagedList)
+        let activePage = document.getElementsByClassName('soc-active-page')[0];
+        activePage.firstChild.classList.remove("pagination-link");
+
+
+        // init tags input for filter dropdown
+        let tagInput = document.querySelector('input[type=tags]');
+        new BulmaTagsInput(tagInput);
+    </script>
+}
+
 
