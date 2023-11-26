@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
+using Quill.Delta;
 using System.Security.Claims;
 using WebApplication5.Controllers.DataServices;
 using WebApplication5.Models;
@@ -21,13 +23,40 @@ namespace WebApplication5.Controllers.BusinessControllers
         {
             QuestionAnswerViewModel vm = new QuestionAnswerViewModel();
 
-            vm.Question = _contextService.GetQuestionById(questionId);  
-            vm.Answers = _contextService.GetAllAnswers()
+            var question = _contextService.GetQuestionById(questionId);  
+            question.Content = ConvertQuillDeltaToHtml(question.Content);
+            vm.Question = question;
+
+            var answers = _contextService.GetAllAnswers()
                 .Where(a => a.AssociatedQuestion.Id == vm.Question.Id).ToList();
+
+            foreach (var ans in answers)
+                ans.Content = ConvertQuillDeltaToHtml(ans.Content);
+
+            vm.Answers = answers;
             vm.AnswerCreateForm = new Answer();
             vm.AnswerUpdateForm = new AnswerUpdateViewModel();
 
             return vm;
+        }
+
+        public Question GetQuestion(int questionId)
+        {
+            var question = _contextService.GetQuestionById(questionId);
+            question.Content = ConvertQuillDeltaToHtml(question.Content);
+
+            return question;
+        }
+
+
+        public string ConvertQuillDeltaToHtml(string deltaString)
+        {
+            // convert quill "delta" string in question.Content to html to be rendered in view
+            JObject deltaObj = JObject.Parse(deltaString);
+            JArray deltaArr = (JArray)deltaObj["ops"];
+            HtmlConverter htmlConverter = new HtmlConverter(deltaArr);
+
+            return htmlConverter.Convert();
         }
 
         public void SubmitQuestionForm(QuestionCreateViewModel questionForm, ClaimsPrincipal userCookie)
