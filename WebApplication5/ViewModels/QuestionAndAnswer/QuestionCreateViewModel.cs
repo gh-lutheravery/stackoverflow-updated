@@ -12,6 +12,8 @@ namespace WebApplication5.ViewModels.QuestionAndAnswer
             _businessController = businessController;
         }
 
+        public List<string> AllTags { get; set; }
+
         public List<string> Tags { get; set; }
 
         [Required]
