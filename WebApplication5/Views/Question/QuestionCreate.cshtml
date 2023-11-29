@@ -48,14 +48,16 @@
             <p>Categorize your question by adding up to 5 tags.</p>
 
             <div class="control">
-                <select multiple data-type="tags" id="TagQuery" data-placeholder="Choose up to 5 tags">
-                    @foreach (var tag in Model.AllTags)
-                    {
-                        <option value="@tag">@tag</option>
-                    }
-                </select>
+                <div class="select is-multiple">
+                    <select multiple size="5" id="tags-input" data-placeholder="Choose up to 5 tags" asp-for="@Model.Tags">
+                        @foreach (var tag in Model.AllTags)
+                        {
+                            <option value="@tag">@tag</option>
+                        }
+                    </select>
+                </div>
             </div>
-            <input type="hidden" id="tags" asp-for="@Model.Tags" />
+            @* <input type="hidden" id="tags" asp-for="@Model.Tags" /> *@
         </div>
 
         <div class="field is-grouped">
@@ -68,29 +70,15 @@
 
 
 @section Scripts {
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-    @* <script src="https://cdn.jsdelivr.net/npm/@@yaireo/tagify"></script> *@
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@@creativebulma/bulma-tagsinput/dist/js/bulma-tagsinput.min.js"></script>
     <script>
-        var questionQuill = new Quill('#editor', {
-          modules: {
-            toolbar: [
-              [{ header: [1, 2, false] }],
-              ['bold', 'italic', 'underline'],
-              ['image', 'code-block']
-            ]
-          },
-          theme: 'snow'
-        });
+        var questionQuill = initDefaultQuill('#editor');
 
         function handleQuestionSubmit() {
             document.getElementById('quill-question-content').value = JSON.stringify(questionQuill.getContents());
             document.getElementById('quill-question-truncated-content').value = questionQuill.getText().slice(0, 167) + "...";
-            document.getElementById('tags').value = JSON.stringify(tagify.value);
+            //document.getElementById('tags').value = JSON.stringify(tagify.value);
         }
 
-        var tagInput = document.getElementById('TagQuery');
-
-        new BulmaTagsInput(tagInput);
+        
     </script>
 }
