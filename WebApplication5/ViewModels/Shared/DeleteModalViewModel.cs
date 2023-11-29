@@ -5,5 +5,6 @@
 		public string Action { get; set; }
 		public string Controller { get; set; }
 		public string DomainName { get; set; }
+		public int ResourceId { get; set; }
 	}
 }
