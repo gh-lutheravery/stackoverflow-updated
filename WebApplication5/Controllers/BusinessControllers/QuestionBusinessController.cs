@@ -34,8 +34,10 @@ namespace WebApplication5.Controllers.BusinessControllers
                 ans.Content = ConvertQuillDeltaToHtml(ans.Content);
 
             vm.Answers = answers;
-            vm.AnswerCreateForm = new Answer();
+            vm.AnswerCreateForm = new AnswerCreateViewModel();
+            vm.AnswerCreateForm.AssociatedQuestionId = vm.Question.Id;
             vm.AnswerUpdateForm = new AnswerUpdateViewModel();
+            vm.AnswerUpdateForm.AssociatedQuestionId = vm.Question.Id;
 
             return vm;
         }
@@ -63,12 +65,14 @@ namespace WebApplication5.Controllers.BusinessControllers
         {
             Question newQuestion = new Question();
 
-            List<Tag> newTags = _contextService.GetAllTags(false)
-                .Where(t => questionForm.Tags.Contains(t.Title)).ToList();
+            List<Tag> newTags = _contextService.context.Tag
+                .Where(t => questionForm.Tags.Contains(t.Title))
+                .ToList();
+
             newQuestion.Tags = newTags;
 
             int userId = Int32.Parse(userCookie.FindFirstValue("ID"));
-            newQuestion.Author = _contextService.GetProfileById(userId);
+            newQuestion.Author = _contextService.context.Profile.Find(userId);
 
             newQuestion.Title = questionForm.Title;
             newQuestion.Content = newQuestion.Content;
@@ -87,8 +91,9 @@ namespace WebApplication5.Controllers.BusinessControllers
             // check if tags were updated to possibly avoid expensive func calls
             if (vm.OriginalQuestion.Tags.Select(t => t.Title) != vm.Tags)
             {
-                vm.OriginalQuestion.Tags = _contextService.GetAllTags(false)
-                    .Where(t => vm.Tags.Contains(t.Title)).ToList();
+                vm.OriginalQuestion.Tags = _contextService.context.Tag
+                    .Where(t => vm.Tags.Contains(t.Title))
+                    .ToList();
             }
 
             vm.OriginalQuestion.Title = vm.Title;
@@ -104,7 +109,7 @@ namespace WebApplication5.Controllers.BusinessControllers
         // GET: QuestionAndAnswerController/Edit/5
         public void DeleteQuestion(int id)
         {
-            var question = _contextService.GetQuestionById(id);
+            var question = _contextService.context.Question.Find(id);
 
             _contextService.context.Question.Remove(question);
             _contextService.context.SaveChanges();
@@ -123,7 +128,10 @@ namespace WebApplication5.Controllers.BusinessControllers
 
         public void IncrementAnswerCount(int id)
         {
-            _contextService.context.Question.SingleOrDefault(a => a.Id == id).AnswerCount += 1;
+            var question = _contextService.context.Question.Find(id);
+            question.AnswerCount += 1;
+
+            _contextService.context.Update(question);
             _contextService.context.SaveChanges();
         }
     }
