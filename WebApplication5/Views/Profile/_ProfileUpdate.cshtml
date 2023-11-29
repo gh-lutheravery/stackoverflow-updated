@@ -1,0 +1,37 @@
+﻿@model WebApplication5.ViewModels.User.ProfileViewModel
+
+
+<div class="card-content">
+    <form asp-controller="Profile" asp-action="ProfileUpdate">
+        @Html.AntiForgeryToken()
+
+        <div class="field">
+            <label class="label" for="Username" name="UpdatedProfile.Name">Username</label>
+            <div class="control">
+                <input class="input" type="text" asp-for="@Model.UpdatedProfile.Name" value="@Model.CurrentProfile.Name" />
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label" for="email" name="UpdatedProfile.Email">Email</label>
+            <div class="control">
+                <input class="input" type="text" asp-for="@Model.UpdatedProfile.Email" value="@Model.CurrentProfile.Email" />
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label" for="bio" name="UpdatedProfile.Bio">Bio</label>
+            <div class="control">
+                <textarea rows="4" cols="50" asp-for="@Model.UpdatedProfile.Bio">@Model.CurrentProfile.Bio</textarea>
+            </div>
+        </div>
+
+        <input type="hidden" id="original-profile-id" asp-for="@Model.UpdatedProfile.OriginalProfileId" value="@Model.CurrentProfile.Id" />
+
+        <div class="field is-grouped">
+            <div class="control">
+                <input type="submit" name="submit" class="button is-link" value="Update" />
+            </div>
+        </div>
+    </form>
+</div>

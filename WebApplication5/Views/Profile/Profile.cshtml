@@ -1,4 +1,5 @@
-﻿@model Profile
+﻿@using WebApplication5.ViewModels.User
+@model ProfileViewModel
 
 
 <div class="row columns">
@@ -12,7 +13,7 @@
 
         <div id="q-tabs">
             <h4 class="subtitle is-4">Questions</h4>
-            @foreach (var question in Model.Questions)
+            @foreach (var question in Model.CurrentProfile.Questions)
             {
                 <div class="media box" id="post">
                     <span class="d-flex flex-column media-rows">
@@ -37,7 +38,7 @@
         </div>
         <div id="a-tabs">
             <h4 class="subtitle is-4">Answers</h4>
-            @foreach (var answer in Model.Answers)
+            @foreach (var answer in Model.CurrentProfile.Answers)
             {
                 <div class="media box" id="post">
                     <span class="d-flex flex-column media-rows">
@@ -57,58 +58,29 @@
     
     <div class="col-4 column">
         <div class="card" style="margin: .5em 1em;">
-            @if (User.Claims.Any(c => c.Value == Model.Id.ToString()))
+            @if (User.Claims.Any(c => c.Value == Model.CurrentProfile.Id.ToString()))
             {
-                <form asp-controller="Profile" asp-action="ProfileUpdate">
-                    @Html.AntiForgeryToken()
-
-                    <div class="field">
-                        <label class="label" for="Username">Username</label>
-                        <div class="control">
-                            <input class="input" type="text" name="Username" asp-for="@Model.Name" />
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label class="label" for="email">Email</label>
-                        <div class="control">
-                            <input class="input" type="text" name="email" asp-for="@Model.Email" />
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label class="label" for="bio">Bio</label>
-                        <div class="control">
-                            <textarea name="bio" rows="4" cols="50" asp-for="@Model.Bio"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="field is-grouped">
-                        <div class="control">
-                            <input type="submit" name="submit" class="button is-link" value="Update" />
-                        </div>
-                    </div>
-                </form>
+                @Html.Partial("~/Views/Profile/_ProfileUpdate.cshtml", Model)
             }
             else
             {
                 <header class="card-header">
                     <p class="card-header-title">
-                        @Model.Name
+                        @Model.CurrentProfile.Name
                     </p>
                 </header>
                 <div class="card-content">
                     <div class="content">
-                        @if (Model.Bio != null)
+                        @if (Model.CurrentProfile.Bio != null)
                         {
                             <h4 class="subtitle">About</h4>
-                            @Model.Bio
+                            @Model.CurrentProfile.Bio
                         }
                     
                         <p><strong>Contact</strong></p>
-                        <p>@Model.Email</p>
+                        <p>@Model.CurrentProfile.Email</p>
 
-                        <p>Joined at: @Model.DateCreated.ToString()</p>
+                        <p>Joined at: @Model.CurrentProfile.DateCreated.ToString()</p>
                     </div>
                 </div>
             }
@@ -118,7 +90,6 @@
 
 
 @section Scripts {
-    <script type="text/javascript" src="~/lib/jquery/dist/jquery.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 
     <script>
