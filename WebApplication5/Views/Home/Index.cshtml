@@ -13,7 +13,7 @@
 }
 
 <div class="row align-items-start columns">
-    <div class="col-7 mr-2 column is-two-thirds">
+    <div class="mr-2 column is-three-quarters">
         <div class="d-flex justify-content-between">
             <h1 class="title is-1">All Questions</h1>
         </div>
@@ -22,10 +22,10 @@
             <div class="level-left">
                 <div class="field has-addons level-item">
                     <p class="control">
-                            <a class="button" asp-controller="Home" asp-action="Index" asp-route-sortBy="Newest">Sort by Newest</a>
+                        <a class="button" asp-controller="Home" asp-action="Index" asp-route-sortBy="Newest">Sort by Newest</a>
                     </p>
                     <p class="control">
-                            <a class="button" asp-controller="Home" asp-action="Index" asp-route-sortBy="Unanswered">Sort by Unanswered</a>
+                        <a class="button" asp-controller="Home" asp-action="Index" asp-route-sortBy="Unanswered">Sort by Unanswered</a>
                     </p>
                 </div>
             </div>
@@ -44,22 +44,13 @@
                                 </span> *@
                             </button>
                         </div>
-                        <div class="dropdown-menu" style="width: 20rem" role="menu" aria-labelledby="dropdownMenuLink">
+                        <div class="dropdown-menu" role="menu" aria-labelledby="dropdownMenuLink">
                             <div class="dropdown-content">
                                 <div class="">
                                     @Html.ActionLink("No answers", "Index", "Home", htmlAttributes: new { @class="dropdown-item" }, routeValues: new { filter="NoAnswers" })
                                 </div>
                                 <div class="">
                                     @Html.ActionLink("No accepted answers", "Index", "Home", htmlAttributes: new { @class="dropdown-item" }, routeValues: new { filter="NoAcceptedAnswers" })
-                                </div>
-                                <div class="ml-auto mr-auto dropdown-item field">
-                                    <hr class="dropdown-divider">
-                                    
-                                    @using (Html.BeginForm("IndexFilterByTag", "Home", FormMethod.Get))
-                                    {
-                                        <p class="dropdown-item-text">Tags</p>
-                                        <input class="input is-rounded" type="tags" id="TagQuery" autofocus />
-                                    }
                                 </div>
                             </div>
                         </div>
@@ -72,8 +63,6 @@
             
             foreach (var question in Model.Questions)
             {
-                <span style="width: .1rem" class="bg-so">
-                </span>
                 <div class="media box" id="post">
                     <span class="d-flex flex-column media-rows">
                         <span class="pl-2 pr-2">@question.ViewCount Views</span>
@@ -117,7 +106,7 @@
             @foreach (var tag in Model.RandomTags)
             {
                 <div class="field">
-                    <span class="badge rounded-pill bg-blue text-bg-dark tag is-info">
+                    <span class="badge rounded-pill has-background-link text-bg-dark tag is-info">
                         @tag
                     </span>
                 </div>
@@ -129,54 +118,9 @@
 
 @section Scripts 
 {
-    @*
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    *@
-
-    @* <script type="text/javascript" src="~/lib/jquery/dist/jquery.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
-    <script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.js"></script> *@
-    
-    @* <script src="https://cdn.jsdelivr.net/npm/@@yaireo/tagify"></script> *@
-
-
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@@creativebulma/bulma-tagsinput/dist/js/bulma-tagsinput.min.js"></script>
-
     <script>
         // hack to give active page correct bulma styling  (due to limitations of X.PagedList)
         let activePage = document.getElementsByClassName('soc-active-page')[0];
         activePage.firstChild.classList.remove("pagination-link");
-
-        
-        // init tags input for filter dropdown
-        let tagInput = document.querySelector('input[type=tags]');
-        new BulmaTagsInput(tagInput);
     </script>
-
-    
-
-    @* <script>
-        let dropdown = document.querySelector('.dropdown');
-        var isTagifyLoaded = false;
-
-        function initTagify() {
-            let tagInput = document.getElementById('TagQuery');
-
-            // initialize Tagify for tag filter
-            new Tagify(tagInput);
-        }
-
-        dropdown.addEventListener('click', function (event) {
-            event.stopPropagation();
-            this.classList.toggle('is-active');
-            if (this.classList.contains('is-active') && !isTagifyLoaded) {
-                initTagify();
-                isTagifyLoaded = true;
-            }
-           
-        });
-
-        
-    </script> *@
 }
