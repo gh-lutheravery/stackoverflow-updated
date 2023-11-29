@@ -6,23 +6,27 @@ using System.Security.Claims;
 using WebApplication5.Controllers.BusinessControllers;
 using WebApplication5.Models;
 using WebApplication5.ViewModels.User;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplication5.Controllers.WebControllers
 {
     public class ProfileController : Controller
     {
         private readonly ProfileBusinessController _businessController;
-        public ProfileController(ProfileBusinessController businessController)
+        private readonly UserAuthorizer _userAuthorizer;
+        public ProfileController(ProfileBusinessController businessController, UserAuthorizer userAuthorizer)
         {
             _businessController = businessController;
+            _userAuthorizer = userAuthorizer;
         }
+
         public ActionResult Details(int id)
         {
-            var profile = _businessController.GetProfileWithQA(id);
-            if (profile is null)
+            var vm = _businessController.PopulateProfileViewModel(id);
+            if (vm.CurrentProfile is null)
                 return NotFound();
 
-            return View("Profile", profile);
+            return View("Profile", vm);
             
         }
 
@@ -51,7 +55,8 @@ namespace WebApplication5.Controllers.WebControllers
                     authProperties);
 
                 string userId = claims.Claims.Single().Value;
-                return RedirectToAction(nameof(Details), routeValues: userId);
+                
+                return RedirectToAction(nameof(Details), routeValues: new { id = userId });
             }
             else
             {
@@ -59,6 +64,7 @@ namespace WebApplication5.Controllers.WebControllers
             }
         }
 
+        [Authorize]
         public ActionResult Logout()
         {
             HttpContext.SignOutAsync();
@@ -87,21 +93,27 @@ namespace WebApplication5.Controllers.WebControllers
             }
         }
 
-        [Route("update")]
-        public ActionResult ProfileUpdate(int id)
-        {
-            ProfileUpdateViewModel viewModel = new ProfileUpdateViewModel();
-            return View(viewModel);
-        }
 
+        //[Authorize]
+        //[Route("update")]
+        //public ActionResult ProfileUpdate(int id)
+        //{
+        //    ProfileUpdateViewModel viewModel = new ProfileUpdateViewModel();
+        //    return View(viewModel);
+        //}
+
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ProfileUpdate(ProfileUpdateViewModel vm)
+        public ActionResult ProfileUpdate(ProfileViewModel vm)
         {
+            if (!_userAuthorizer.IsUserTheAuthor(vm.UpdatedProfile.OriginalProfileId, User))
+                return Forbid();
+
             if (ModelState.IsValid)
             {
-                _businessController.ProfileUpdate(vm);
-                return RedirectToAction(nameof(Profile));
+                _businessController.ProfileUpdate(vm.UpdatedProfile);
+                return RedirectToAction(nameof(Details));
             }
             else
             {
@@ -109,12 +121,16 @@ namespace WebApplication5.Controllers.WebControllers
             }
         }
 
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
         {
+            if (!_userAuthorizer.IsUserTheAuthorByResourceId(id, new Profile(), User))
+                return Forbid();
+
             _businessController.ProfileDelete(id);
-            return RedirectToAction(nameof(HomeController.Index), nameof(HomeController));
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
     }
 }

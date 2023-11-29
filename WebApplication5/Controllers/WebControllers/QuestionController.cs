@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebApplication5.Controllers.BusinessControllers;
 using WebApplication5.Models;
 using WebApplication5.ViewModels;
@@ -6,16 +7,21 @@ using WebApplication5.ViewModels.QuestionAndAnswer;
 
 namespace WebApplication5.Controllers.WebControllers
 {
+    [Authorize]
     public class QuestionController : Controller
     {
         private readonly QuestionBusinessController _questionBusinessController;
         private readonly TagBusinessController _tagBusinessController;
-        public QuestionController(QuestionBusinessController questionBusinessController, TagBusinessController tagBusinessController)
+        private readonly UserAuthorizer _userAuthorizer;
+
+        public QuestionController(QuestionBusinessController questionBusinessController, TagBusinessController tagBusinessController, UserAuthorizer userAuthorizer)
         {
             _questionBusinessController = questionBusinessController;
             _tagBusinessController = tagBusinessController;
+            _userAuthorizer = userAuthorizer;
         }
 
+        [AllowAnonymous]
         public ActionResult Details(int id)
         {
             QuestionAnswerViewModel viewModel = _questionBusinessController.PopulateQuestionAnswerViewModel(id);
@@ -51,6 +57,7 @@ namespace WebApplication5.Controllers.WebControllers
         {
             QuestionUpdateViewModel vm = new QuestionUpdateViewModel();
             vm.OriginalQuestion = _questionBusinessController.GetQuestion(id);
+            vm.OriginalQuestionId = id;
 
             return View(vm);
         }
@@ -59,6 +66,9 @@ namespace WebApplication5.Controllers.WebControllers
         [ValidateAntiForgeryToken]
         public ActionResult QuestionUpdate(QuestionUpdateViewModel viewModel)
         {
+            if (!_userAuthorizer.IsUserTheAuthor(viewModel.OriginalQuestion.Id, User))
+                return Forbid();
+
             if (ModelState.IsValid)
             {
                 _questionBusinessController.UpdateQuestion(viewModel);
@@ -74,8 +84,11 @@ namespace WebApplication5.Controllers.WebControllers
         [ValidateAntiForgeryToken]
         public ActionResult QuestionDelete(int questionId)
         {
+            if (!_userAuthorizer.IsUserTheAuthorByResourceId(questionId, new Question(), User))
+                return Forbid();
+
             _questionBusinessController.DeleteQuestion(questionId);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
     }
 }
