@@ -1,4 +1,22 @@
-﻿// Requires jquery for vote count functions
+﻿// Requires jquery for vote count functions, and quill for init function
+
+
+
+function initDefaultQuill(containerId) {
+    let quillObj = new Quill(containerId, {
+        modules: {
+            toolbar: [
+                [{ header: [1, 2, false] }],
+                ['bold', 'italic', 'underline', 'code-block'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'script': 'sub' }, { 'script': 'super' }],
+                ['image']
+            ]
+        },
+        theme: 'snow'
+    });
+    return quillObj;
+}
 
 
 // Functions for modals used for various CRUD views
@@ -13,6 +31,7 @@ function closeModal(modal) {
 // Add a click event on buttons to open a specific modal
 (document.querySelectorAll('.open-modal-trigger') || []).forEach((trigger) => {
     const modal = trigger.dataset.target;
+    console.log(modal);
     const target = document.getElementById(modal);
 
     trigger.addEventListener('click', () => {
@@ -21,12 +40,12 @@ function closeModal(modal) {
 });
 
 // Add a click event on various child elements to close the parent modal
-(document.querySelectorAll('.cancel-modal-trigger') || []).forEach((close) => {
+(document.querySelectorAll('.cancel-modal-trigger') || []).forEach((trigger) => {
     /*const target = close.closest('.modal');*/
     const modal = trigger.dataset.target;
     const target = document.getElementById(modal);
 
-    close.addEventListener('click', () => {
+    trigger.addEventListener('click', () => {
         closeModal(target);
     });
 });
