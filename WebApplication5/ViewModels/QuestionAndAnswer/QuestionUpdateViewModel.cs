@@ -5,9 +5,9 @@ namespace WebApplication5.ViewModels.QuestionAndAnswer
 {
     public class QuestionUpdateViewModel
     {
-        public List<string> Tags { get; set; }
+        public string[] Tags { get; set; }
 
-        public string TagStr { get; set; }
+        public List<string> AllTags { get; set; }
 
         [Required]
         [MaxLength(ValidationConstants.MaxPostTitleLength)]
@@ -18,6 +18,8 @@ namespace WebApplication5.ViewModels.QuestionAndAnswer
         public string Content { get; set; }
 
         public string TruncatedContent { get; set; }
+
+        public int OriginalQuestionId { get; set; }
 
         public Question? OriginalQuestion { get; set; }
     }

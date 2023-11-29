@@ -11,6 +11,6 @@ namespace WebApplication5.ViewModels.QuestionAndAnswer
 
         public string TruncatedContent { get; set; }
 
-        public Question? AssociatedQuestion { get; set; }
+        public int AssociatedQuestionId { get; set; }
     }
 }

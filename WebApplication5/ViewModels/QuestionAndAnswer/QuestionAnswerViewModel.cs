@@ -9,8 +9,10 @@ namespace WebApplication5.ViewModels
 
 		public List<Answer> Answers { get; set; }
 
-		public Answer AnswerCreateForm { get; set; }
+		public AnswerCreateViewModel AnswerCreateForm { get; set; }
 
         public AnswerUpdateViewModel AnswerUpdateForm { get; set; }
+
+		public int? ClientAnswerId { get; set; }
     }
 }

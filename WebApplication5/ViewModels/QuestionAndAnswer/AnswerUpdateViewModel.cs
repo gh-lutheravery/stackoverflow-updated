@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WebApplication5.Models;
 
 namespace WebApplication5.ViewModels.QuestionAndAnswer
 {
@@ -9,10 +8,10 @@ namespace WebApplication5.ViewModels.QuestionAndAnswer
         [MaxLength(ValidationConstants.MaxPostContentLength)]
         public string Content { get; set; }
 
-        public string TruncatedContent { get; set; }
+        public int OriginalAnswerId { get; set; }
 
-        public Question? AssociatedQuestion { get; set; }
+        public int AssociatedQuestionId { get; set; }
 
-        public Answer? OriginalAnswer { get; set; }
+        public string? OriginalAnswerContent { get; set; }
     }
 }
