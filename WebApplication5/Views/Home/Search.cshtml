@@ -43,7 +43,10 @@
                             <span class="pl-2 pr-2">@question.VoteCount Votes</span>
                         </span>
                         <div class="media-body">
-                            <h4 class="mt-0 soc-post-title">@question.Title</h4>
+                            <h4 class="mt-0 soc-post-title">
+                                <a asp-controller="Question" asp-action="Details" asp-route-id="@question.Id">@question.Title</a>
+                            </h4>
+
                             <p class="text-muted has-text-grey">@question.TruncatedContent...</p>
                             <div class="d-flex justify-content-around prevent-overflow">
                                 @foreach (var tag in @question.Tags)
@@ -51,8 +54,8 @@
                                     <span class="badge rounded-pill text-bg-dark tag is-warning">@tag.Title</span>
                                 }
                             </div>
+                        </div>
                     </div>
-                </div>
                 }
 
                 @Html.PagedListPager(Model.Questions, page => Url.Action("Index", "Home", new { pageNumber = page }),
@@ -84,7 +87,7 @@
             @foreach (var tag in Model.RandomTags)
             {
                 <div class="field">
-                    <span class="badge rounded-pill bg-blue text-bg-dark tag is-info">
+                    <span class="badge rounded-pill has-background-link text-bg-dark tag is-info">
                         @tag
                     </span>
                 </div>
@@ -96,17 +99,10 @@
 
 @section Scripts
     {
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@@creativebulma/bulma-tagsinput/dist/js/bulma-tagsinput.min.js"></script>
-
     <script>
         // hack to give active page correct bulma styling  (due to limitations of X.PagedList)
         let activePage = document.getElementsByClassName('soc-active-page')[0];
         activePage.firstChild.classList.remove("pagination-link");
-
-
-        // init tags input for filter dropdown
-        let tagInput = document.querySelector('input[type=tags]');
-        new BulmaTagsInput(tagInput);
     </script>
 }
 
