@@ -2,15 +2,22 @@
 using WebApplication5.Controllers.BusinessControllers;
 using WebApplication5.ViewModels.QuestionAndAnswer;
 using WebApplication5.Controllers.WebControllers;
+using Microsoft.AspNetCore.Authorization;
+using Humanizer.Localisation;
+using System.Security.Claims;
+using WebApplication5.Models;
 
 namespace WebApplication5.Controllers.WebControllers
 {
+    [Authorize]
     public class AnswerController : Controller
     {
         private readonly AnswerBusinessController _businessController;
-        public AnswerController(AnswerBusinessController businessController)
+        private readonly UserAuthorizer _userAuthorizer;
+        public AnswerController(AnswerBusinessController businessController, UserAuthorizer userAuthorizer)
         {
             _businessController = businessController;
+            _userAuthorizer = userAuthorizer;
         }
 
         [HttpPost]
@@ -20,7 +27,8 @@ namespace WebApplication5.Controllers.WebControllers
             if (ModelState.IsValid)
             {
                 _businessController.SubmitAnswerForm(viewModel, User);
-                return RedirectToAction(viewModel.AssociatedQuestion.Id.ToString(), nameof(QuestionController));
+                return RedirectToAction(nameof(QuestionController.Details), "Question",
+                                    routeValues: new { id = viewModel.AssociatedQuestionId });
             }
             else
             {
@@ -32,24 +40,28 @@ namespace WebApplication5.Controllers.WebControllers
         [ValidateAntiForgeryToken]
         public ActionResult AnswerUpdate(AnswerUpdateViewModel viewModel)
         {
+            if (!_userAuthorizer.IsUserTheAuthorByResourceId(viewModel.OriginalAnswerId, new Answer(), User))
+                return Forbid();
+
             if (ModelState.IsValid)
             {
-                _businessController.UpdateAnswer(viewModel);
-                return RedirectToAction(nameof(QuestionController.Details), nameof(QuestionController),
-                    routeValues: new { Id = viewModel.AssociatedQuestion.Id });
+                _businessController.UpdateAnswer(viewModel);  
             }
-            else
-            {
-                return View(viewModel);
-            }
+
+            return RedirectToAction(nameof(QuestionController.Details), "Question",
+                    routeValues: new { id = viewModel.AssociatedQuestionId });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AnswerDelete(int id)
         {
+            if (!_userAuthorizer.IsUserTheAuthorByResourceId(id, new Answer(), User))
+                return Forbid();
+
             _businessController.DeleteAnswer(id);
-            return RedirectToAction(nameof(HomeController.Index));
+            return RedirectToAction(nameof(HomeController.Index), "Home");
+            
         }
     }
 }

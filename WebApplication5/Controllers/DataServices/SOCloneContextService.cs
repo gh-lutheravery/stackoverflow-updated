@@ -94,13 +94,11 @@ namespace WebApplication5.Controllers.DataServices
             if (include)
             {
                 tags = context.Tag
-                    .Include(p => p.Questions)
-                    .AsNoTracking();
+                    .Include(p => p.Questions);
             }
             else
             {
-                tags = context.Tag
-                    .AsNoTracking();
+                tags = context.Tag;
             }
 
             return tags;
