@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using System.Security.Claims;
 using WebApplication5.Controllers.DataServices;
 using WebApplication5.Models;
 using WebApplication5.ViewModels;
+using WebApplication5.ViewModels.Home;
 using WebApplication5.ViewModels.QuestionAndAnswer;
 using WebApplication5.ViewModels.User;
 
@@ -20,8 +22,19 @@ namespace WebApplication5.Controllers.BusinessControllers
             _contextService = context;
         }
 
-        // GET: QuestionAndAnswerController
-        public Profile? GetProfileWithQA(int? id)
+        public ProfileViewModel PopulateProfileViewModel(int profileId)
+        {
+            ProfileViewModel vm = new ProfileViewModel();
+            vm.CurrentProfile = GetProfileWithQA(profileId);
+            vm.UpdatedProfile = new ProfileUpdateViewModel();
+
+            vm.UpdatedProfile.OriginalProfileId = profileId;
+            return vm;
+        }
+
+
+            // GET: QuestionAndAnswerController
+            public Profile? GetProfileWithQA(int? id)
         {
             if (id == null) 
                 return null;
@@ -94,8 +107,7 @@ namespace WebApplication5.Controllers.BusinessControllers
         // GET: QuestionAndAnswerController/Edit/5
         public void ProfileUpdate(ProfileUpdateViewModel vm)
         {
-            Profile? profile = _contextService.context.Profile
-                .SingleOrDefault(p => p.Id == vm.OriginalProfile.Id);
+            Profile? profile = _contextService.context.Profile.Find(vm.OriginalProfileId);
 
             if (profile != null)
             {
@@ -111,8 +123,7 @@ namespace WebApplication5.Controllers.BusinessControllers
 
         public void ProfileDelete(int id)
         {
-            Profile? profile = _contextService.context.Profile
-                .SingleOrDefault(p => p.Id == id);
+            Profile? profile = _contextService.context.Profile.Find(id);
 
             if (profile != null)
             {
