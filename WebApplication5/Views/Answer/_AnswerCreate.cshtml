@@ -1,4 +1,5 @@
-﻿@model Answer
+﻿@using WebApplication5.ViewModels.QuestionAndAnswer
+@model AnswerCreateViewModel
 
 @* partial view in QuestionAnswer *@
 
@@ -14,6 +15,7 @@
                 <div id="new-answer-editor" class="content"></div>
                 <input type="hidden" id="quill-new-answer-content" asp-for="@Model.Content" />
                 <input type="hidden" id="quill-new-answer-truncated-content" asp-for="@Model.TruncatedContent" />
+                <input type="hidden" id="associated-question-id" asp-for="@Model.AssociatedQuestionId" />
             </div>
         </div>
 

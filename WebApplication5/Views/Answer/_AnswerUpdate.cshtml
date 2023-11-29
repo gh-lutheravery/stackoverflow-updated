@@ -1,27 +1,29 @@
-﻿@model WebApplication5.ViewModels.QuestionAndAnswer.AnswerUpdateViewModel
+﻿@using WebApplication5.ViewModels.QuestionAndAnswer
+@model AnswerUpdateViewModel
 
 @* partial view in QuestionAnswer *@
 
 
 <div class="modal" id="answer-update-modal">
     <div class="modal-background"></div>
-    <div class="modal-card">
+    <div class="modal-card" style="width: 50%">
         <header class="modal-card-head">
             <h2 class="modal-card-title">Edit Answer</h2>
-            <button class="delete cancel-modal-trigger" data-target="#answer-update-modal" aria-label="close"></button>
+            <button class="delete cancel-modal-trigger" data-target="answer-update-modal" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
             <div class="content-section mt-2">
                 <form id="form" asp-controller="Answer" asp-action="AnswerUpdate" onsubmit="handleAnswerUpdateSubmit()">
                     @Html.AntiForgeryToken()
 
-                    <div class="form-group">
-                        <label for="editor">Content</label>
-                        <div id="update-answer-editor" class="form-control">@Html.Raw(Model.OriginalAnswer.Content)</div>
+                    <div class="control">
+                        <div id="update-answer-editor" class="form-control">@Html.Raw(Model.OriginalAnswerContent)</div>
                         <input type="hidden" id="quill-update-answer-content" asp-for="@Model.Content" />
+                        <input type="hidden" id="associated-question-id" asp-for="@Model.AssociatedQuestionId" />
+                        <input type="hidden" id="original-answer-id" asp-for="@Model.OriginalAnswerId" />
                     </div>
 
-                    <div class="form-group">
+                    <div class="control">
                         <input type="submit" name="submit" class="button" value="Update Answer" />
                     </div>
                 </form>
@@ -29,22 +31,3 @@
         </section>
     </div>
 </div>
-
-@section Scripts {
-    <script>
-        var answerUpdateQuill = new Quill('#update-answer-editor', {
-            modules: {
-                toolbar: [
-                    [{ header: [1, 2, false] }],
-                    ['bold', 'italic', 'underline'],
-                    ['image', 'code-block']
-                ]
-            },
-            theme: 'snow'
-        });
-
-        function handleAnswerUpdateSubmit() {
-            document.getElementById('quill-update-answer-content').value = JSON.stringify(answerUpdateQuill.getContents());
-        }
-    </script>
-}
