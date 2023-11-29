@@ -1,4 +1,5 @@
-﻿@using WebApplication5.ViewModels.Shared
+﻿@using WebApplication5.ViewModels.QuestionAndAnswer
+@using WebApplication5.ViewModels.Shared
 
 @model QuestionAnswerViewModel
 
@@ -60,10 +61,11 @@
                     @if (User.Claims.Any(c => c.Value == Model.Question.Author.Id.ToString()))
                     {
                         <div class="level-right">
-                            <a class="button mr-2" asp-controller="Question" asp-action="QuestionUpdate" asp-route-id="@Model.Question.Id">Update</a>
-                            <button type="button" class="button is-danger" data-toggle="modal" data-target="#@deleteQuestionModalName">Delete</button>
+                            <a class="button is-link mr-2 open-modal-trigger" asp-controller="Question" asp-action="QuestionUpdate" asp-route-id="@Model.Question.Id">Update</a>
+
+                            <button type="button" class="button is-danger open-modal-trigger" data-toggle="modal" data-target="@deleteQuestionModalName">Delete</button>
                             @Html.Partial("~/Views/Shared/_DeleteModal.cshtml", new DeleteModalViewModel()
-                                { Action="DeleteQuestion", DomainName="Question", Controller="Question" } )
+                                { Action="QuestionDelete", DomainName="Question", Controller="Question", ResourceId=Model.Question.Id } )
                         </div>
                 
                     }
@@ -93,7 +95,7 @@
 
 
                         <div class="media-content">
-                            <div class="condtent mb-4">
+                            <div class="mb-4">
                                 <p>
                                     <div class="content post-view soc-answer">@Html.Raw(ans.Content)</div>
                                 </p>
@@ -102,24 +104,24 @@
                             <nav class="level is-mobile media">
                                 <div class="level-left">
                                     @Html.ActionLink(ans.Author.Name, "Details", "Profile", routeValues: new { @id=ans.Author.Id },
-                                htmlAttributes: new { @class="mr-4 level-item" })
+                                        htmlAttributes: new { @class="mr-4 level-item" })
 
                                     <small class="text-muted ml-auto level-item">Created at:  @ans.DateCreated</small>
                                 </div>
+
                                 @if (User.Claims.Any(c => c.Value == ans.Author.Id.ToString()))
                                 {
-                                    Model.AnswerUpdateForm.AssociatedQuestion = Model.Question;
-                                    Model.AnswerUpdateForm.OriginalAnswer = ans;
+                                    Model.ClientAnswerId = ans.Id;
+                                    Model.AnswerUpdateForm.OriginalAnswerContent = ans.Content;
 
                                     <div class="level-right">
-                                        <button type="button" class="btn btn-primary btn-sm m-1 open-modal-trigger" data-target="#answer-update-modal">Update</button>
+                                        <button type="button" class="button is-link" data-target="answer-update-modal">Update</button>
                                         @Html.Partial("~/Views/Answer/_AnswerUpdate.cshtml", Model.AnswerUpdateForm)
 
-                                        <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#@deleteAnswerModalName">Delete</button>
+                                        <button type="button" class="button is-danger" data-target="@deleteAnswerModalName">Delete</button>
                                         @Html.Partial("~/Views/Shared/_DeleteModal.cshtml", new DeleteModalViewModel()
-                                            { Action="DeleteAnswer", DomainName="Answer", Controller="Answer" } )
+                                            { Action="AnswerDelete", DomainName="Answer", Controller="Answer", ResourceId=ans.Id } )
                                     </div>
-
                                 }
                             </nav>
                         </div>
@@ -140,7 +142,7 @@
             @foreach (var tag in Model.Question.Tags)
             {
                 <div class="field">
-                    <span class="badge rounded-pill bg-blue text-bg-dark tag is-info">
+                    <span class="badge rounded-pill has-background-link text-bg-dark tag is-info">
                         @tag.Title
                     </span>
                 </div>
@@ -151,17 +153,13 @@
 
 @section Scripts 
 {
-    <script type="text/javascript" src="~/lib/jquery/dist/jquery.js"></script>
-    <script type="text/javascript" src="~/js/site.js"></script>
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-
-
     <script>
         // init question rich text
         const questionViewQuill = new Quill('#question-view', {
             modules: { toolbar: false },
             theme: 'snow'
         });
+        questionViewQuill.disable();
 
         // init answer rich text
         const answerList = document.getElementsByClassName('soc-answer');
@@ -169,26 +167,32 @@
             new Quill(answer, {
                 modules: { toolbar: false },
                 theme: 'snow'
-            })
+            }).disable();
         }
 
         // init answer form editor
-        var newAnswerQuill = new Quill('#new-answer-editor', {
-            modules: {
-                toolbar: [
-                    [{ header: [1, 2, false] }],
-                    ['bold', 'italic', 'underline'],
-                    ['image', 'code-block']
-                ]
-            },
-            theme: 'snow'
-        });
+        var newAnswerQuill = initDefaultQuill('#new-answer-editor');
 
         function handleNewAnswerSubmit() {
             document.getElementById('quill-new-answer-content').value = JSON.stringify(newAnswerQuill.getContents());
             document.getElementById('quill-new-answer-truncated-content').value = newAnswerQuill.getText().slice(0, 167) + "...";
+            document.getElementById('associated-question-id').value = @Model.Question.Id;
         }
     </script>
+
+    @if (Model.ClientAnswerId != null)
+    {
+        <script>
+            // init answer update editor
+            var answerUpdateQuill = initDefaultQuill('#update-answer-editor');
+
+            function handleAnswerUpdateSubmit() {
+                document.getElementById('quill-update-answer-content').value = JSON.stringify(answerUpdateQuill.getContents());
+                document.getElementById('associated-question-id').value = @Model.Question.Id;
+                document.getElementById('original-answer-id').value = @Model.ClientAnswerId;
+            }
+        </script>
+    }
 }
 
 
