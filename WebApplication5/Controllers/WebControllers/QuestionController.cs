@@ -50,6 +50,7 @@ namespace WebApplication5.Controllers.WebControllers
             }
             else
             {
+                viewModel.AllTags = _tagBusinessController.GetAllTagStrings();
                 return View(viewModel);
             }
         }
