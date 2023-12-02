@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebApplication5.Models;
 
 namespace WebApplication5.Data
 {
@@ -27,6 +28,31 @@ namespace WebApplication5.Data
                     Console.WriteLine(item);
                 }
                 context.Database.Migrate();
+
+                if (!context.Tag.Any())
+                {
+                    List<Tag> tags = new List<Tag>()
+                    {
+                        new Tag() { Title = ".NET" },
+                        new Tag() { Title = "Python" },
+                        new Tag() { Title = "Java" },
+                        new Tag() { Title = "Javascript" },
+                        new Tag() { Title = "Go" },
+                        new Tag() { Title = "Rust" },
+                        new Tag() { Title = "C++" },
+                        new Tag() { Title = "C" },
+                        new Tag() { Title = "ReactJS" },
+                        new Tag() { Title = "R" },
+                        new Tag() { Title = "HTML" },
+                        new Tag() { Title = "SQL" },
+                        new Tag() { Title = "Mobile" },
+                        new Tag() { Title = "Linux" },
+                        new Tag() { Title = "Windows" },
+                        new Tag() { Title = "Web" },
+                    };
+                    context.Tag.AddRange(tags);
+                    context.SaveChanges();
+                }
             }
         }
     }
