@@ -1,12 +1,19 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication5.Controllers.BusinessControllers;
+using WebApplication5.Migrations;
 using WebApplication5.Models;
 using WebApplication5.ViewModels;
 using WebApplication5.ViewModels.QuestionAndAnswer;
 
 namespace WebApplication5.Controllers.WebControllers
 {
+    public class VoteRequest
+    {
+        public int id { get; set; }
+        public int incrementBy { get; set; }
+    }
+
     [Authorize]
     public class QuestionController : Controller
     {
@@ -93,9 +100,13 @@ namespace WebApplication5.Controllers.WebControllers
         }
 
         [HttpPost]
-        public ActionResult UpdateVote([FromBody] int answerId, [FromBody] int incrementBy)
+        public ActionResult UpdateVote(string req)
         {
-            bool result = _questionBusinessController.IncrementVoteCount(answerId, incrementBy);
+            var splitReq = req.Split(',');
+            int id = Int32.Parse(splitReq[0]);
+            int incrementBy = Int32.Parse(splitReq[1]);
+
+            bool result = _questionBusinessController.IncrementVoteCount(id, incrementBy);
             if (result == false)
                 return NotFound();
 
