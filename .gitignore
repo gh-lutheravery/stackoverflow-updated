@@ -364,3 +364,8 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /WebApplication5/Data/user.csv
+/WebApplication5/Properties/serviceDependencies.soclone - Web Deploy.json
+/WebApplication5/Properties/serviceDependencies.json
+/WebApplication5/Properties/ServiceDependencies/soclone - Web Deploy
+/WebApplication5/.config
+/WebApplication5/Properties/serviceDependencies.json
