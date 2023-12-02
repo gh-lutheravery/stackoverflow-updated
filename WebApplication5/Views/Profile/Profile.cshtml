@@ -16,11 +16,11 @@
             @foreach (var question in Model.CurrentProfile.Questions)
             {
                 <div class="media box" id="post">
-                    <span class="d-flex flex-column media-rows">
+                    <span class="mini-media-rows">
                         <span class="pl-2 pr-2">@question.ViewCount Views</span>
                         <span class="pl-2 pr-2">@question.VoteCount Votes</span>
                     </span>
-                    <div class="media-body">
+                    <div class="media-body" style="width: 87%;">
                         <h4 class="mt-0 soc-post-title">
                             <a asp-controller="Question" asp-action="Details" asp-route-id="@question.Id">@question.Title</a>
                         </h4>
@@ -41,14 +41,15 @@
             @foreach (var answer in Model.CurrentProfile.Answers)
             {
                 <div class="media box" id="post">
-                    <span class="d-flex flex-column media-rows">
+                    <span class="media-rows" >
                         <span class="pl-2 pr-2">@answer.VoteCount Votes</span>
                         @if (answer.IsAccepted)
                         {
                             <span class="pl-2 pr-2">This answer was accepted.</span>
                         }
                     </span>
-                    <div class="media-body">
+                    <div class="media-body" style="width: 87%;">
+                        <a asp-controller="Question" asp-action="Details" asp-route-id="@answer.AssociatedQuestion.Id">Open answered question</a>
                         <p class="text-muted has-text-grey">@answer.TruncatedContent...</p>
                     </div>
                 </div>
@@ -70,17 +71,24 @@
                     </p>
                 </header>
                 <div class="card-content">
-                    <div class="content">
+                    <div class="content block">
                         @if (Model.CurrentProfile.Bio != null)
                         {
-                            <h4 class="subtitle">About</h4>
-                            @Model.CurrentProfile.Bio
+                            <div class="mb-2">
+                                <h4 class="subtitle" style="margin: 0">About</h4>
+                                @Model.CurrentProfile.Bio
+                            </div>
                         }
-                    
-                        <p><strong>Contact</strong></p>
-                        <p>@Model.CurrentProfile.Email</p>
 
-                        <p>Joined at: @Model.CurrentProfile.DateCreated.ToString()</p>
+                        <div class="mb-2">
+                            <strong>Contact</strong>
+                            <p>@Model.CurrentProfile.Email</p>
+                        </div>
+
+                        <div>
+                            <strong>Join Date</strong>
+                            <p>@Model.CurrentProfile.DateCreated.ToString()</p>
+                        </div>
                     </div>
                 </div>
             }

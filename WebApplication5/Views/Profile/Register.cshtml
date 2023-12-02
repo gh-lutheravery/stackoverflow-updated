@@ -7,45 +7,39 @@
         @Html.AntiForgeryToken()
 
         <div class="field">
-            <label class="label" for="Username">Username</label>
+            <label class="label" for="Name">Username</label>
             <div class="control">
-                <input class="input" type="text" name="Username" asp-for="Name" />
-            </div>
-            <div class="alert alert-warning" role="alert">
-                @Html.ValidationMessageFor(m => m.Name)
+                <input class="input" type="text" name="Name" asp-for="Name" />
             </div>
         </div>
 
         <div class="field">
-            <label class="label" for="email">Email</label>
+            <label class="label" for="Email">Email</label>
             <div class="control">
-                <input class="input" type="text" name="email" asp-for="Email" />
-            </div>
-            <div class="alert alert-warning" role="alert">
-                @Html.ValidationMessageFor(m => m.Email)
+                <input class="input" type="text" name="Email" asp-for="Email" />
             </div>
         </div>
 
         <div class="field">
             <label class="label" for="Password">Password</label>
             <div class="control">
-                <input class="input" type="text" name="Password" asp-for="Password" />
-            </div>
-            <div class="alert alert-warning" role="alert">
-                @Html.ValidationMessageFor(m => m.Password)
+                <input class="input" type="password" name="Password" asp-for="Password" />
             </div>
         </div>
 
         <div class="field">
-            <label class="label" for="confirm-password">Confirm Password</label>
+            <label class="label" for="ConfirmPassword">Confirm Password</label>
             <div class="control">
-                <input class="input" type="text" name="confirm-password" asp-for="ConfirmPassword" />
-            </div>
-            <div class="alert alert-warning" role="alert">
-                @Html.ValidationMessageFor(m => m.ConfirmPassword)
+                <input class="input" type="password" name="ConfirmPassword" asp-for="ConfirmPassword" />
             </div>
         </div>
 
+        @if (!Html.ViewData.ModelState.IsValid)
+        {
+            <div class="notification is-warning " role="alert">
+                @Html.ValidationSummary()
+            </div>
+        }
         <div class="field is-grouped">
             <div class="control">
                 <input type="submit" name="submit" class="button is-link" value="Sign up" />
