@@ -22,10 +22,10 @@
             <div class="level-left">
                 <div class="field has-addons level-item">
                     <p class="control">
-                        <a class="button" asp-controller="Home" asp-action="Index" asp-route-sortBy="Newest">Sort by Newest</a>
+                        <a class="button" asp-controller="Home" asp-action="Index" asp-route-sortBy="Newest" asp-route-pageNumber="@Model.Questions.PageNumber">Sort by Newest</a>
                     </p>
                     <p class="control">
-                        <a class="button" asp-controller="Home" asp-action="Index" asp-route-sortBy="Unanswered">Sort by Unanswered</a>
+                        <a class="button" asp-controller="Home" asp-action="Index" asp-route-sortBy="Unanswered" asp-route-pageNumber="@Model.Questions.PageNumber">Sort by Unanswered</a>
                     </p>
                 </div>
             </div>
@@ -64,11 +64,11 @@
             foreach (var question in Model.Questions)
             {
                 <div class="media box" id="post">
-                    <span class="d-flex flex-column media-rows">
+                    <span class="mini-media-rows">
                         <span class="pl-2 pr-2">@question.ViewCount Views</span>
                         <span class="pl-2 pr-2">@question.VoteCount Votes</span>
                     </span>
-                    <div class="media-body">
+                    <div class="media-body" style="width: 87%;">
                         <h4 class="mt-0 soc-post-title">
                             <a asp-controller="Question" asp-action="Details" asp-route-id="@question.Id">@question.Title</a>
                         </h4>
@@ -85,7 +85,11 @@
             }
         }
         
-        @Html.PagedListPager(Model.Questions, page => Url.Action("Index", "Home", new { pageNumber = page }),
+        @Html.PagedListPager(Model.Questions, page => Url.Action("Index", "Home", new { 
+            pageNumber = page, 
+            sortBy = Model.SortBy, 
+            filterBy = Model.FilterBy 
+        }),
         new PagedListRenderOptions
         {
             DisplayItemSliceAndTotal = false,
@@ -106,7 +110,7 @@
             @foreach (var tag in Model.RandomTags)
             {
                 <div class="field">
-                    <span class="badge rounded-pill has-background-link text-bg-dark tag is-info">
+                    <span class="badge rounded-pill has-background-link text-bg-dark tag is-info is-medium">
                         @tag
                     </span>
                 </div>
