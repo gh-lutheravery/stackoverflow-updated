@@ -137,17 +137,21 @@
         <span class="mb-2">
             @Html.Partial("~/Views/Shared/_AskQuestion.cshtml")
         </span>
-        <h1 class="subtitle is-3 mt-5">Search tags used in this post</h1>
-        <div class="list-unstyled media-rows">
-            @foreach (var tag in Model.Question.Tags)
-            {
-                <div class="field">
-                    <span class="badge rounded-pill has-background-link text-bg-dark tag is-info is-medium">
-                        <a class="has-text-white" asp-controller="Home" asp-action="Search" asp-route-searchQuery="tag:@tag.Title" asp-route-pageNumber="1">@tag.Title</a>
-                    </span>
-                </div>
-            }
-        </div>
+
+        @if (Model.Question.Tags.Any()) 
+        {
+            <h1 class="subtitle is-3 mt-5">Search tags used in this post</h1>
+            <div class="list-unstyled media-rows">
+                @foreach (var tag in Model.Question.Tags)
+                {
+                    <div class="field">
+                        <span class="badge rounded-pill has-background-link text-bg-dark tag is-info is-medium">
+                            <a class="has-text-white" asp-controller="Home" asp-action="Search" asp-route-searchQuery="tag:@tag.Title" asp-route-pageNumber="1">@tag.Title</a>
+                        </span>
+                    </div>
+                }
+            </div>
+        }
     </div>
 </div>
 

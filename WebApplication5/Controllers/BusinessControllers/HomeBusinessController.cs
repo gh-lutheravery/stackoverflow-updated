@@ -124,9 +124,17 @@ namespace WebApplication5.Controllers.BusinessControllers
                 allQuestions = allQuestions.Where(q => QuestionContains(q, string.Empty, searchTerm)).ToList();
             else
                 allQuestions = allQuestions.Where(q => QuestionContains(q, searchTerm)).ToList();
-
-            if (sortBy.IsNullOrEmpty())
-                vm.Questions = SortQuestions(allQuestions, sortBy).ToPagedList(pageNumber, _pageSize);
+            
+            if (!sortBy.IsNullOrEmpty())
+            {
+                IPagedList<Question> pagedList;
+                pagedList = SortQuestions(allQuestions, sortBy).ToPagedList(pageNumber, _pageSize);
+                vm.Questions = pagedList;
+            }
+            else 
+            {
+                vm.Questions = allQuestions.ToPagedList(pageNumber, _pageSize);
+            }
 
             var tags = _context.GetAllTags(false)
                 .Select(t => t.Title).ToList();

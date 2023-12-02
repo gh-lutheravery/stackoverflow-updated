@@ -78,7 +78,7 @@ namespace WebApplication5.Controllers.WebControllers
             }
             else
             {
-                return View(viewModel);
+                return RedirectToAction(nameof(QuestionUpdate), routeValues: new { id = viewModel.OriginalQuestionId });
             }
         }
 
@@ -93,6 +93,7 @@ namespace WebApplication5.Controllers.WebControllers
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public ActionResult UpdateVote(string req)
         {
