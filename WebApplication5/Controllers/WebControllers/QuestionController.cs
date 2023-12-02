@@ -8,12 +8,6 @@ using WebApplication5.ViewModels.QuestionAndAnswer;
 
 namespace WebApplication5.Controllers.WebControllers
 {
-    public class VoteRequest
-    {
-        public int id { get; set; }
-        public int incrementBy { get; set; }
-    }
-
     [Authorize]
     public class QuestionController : Controller
     {
