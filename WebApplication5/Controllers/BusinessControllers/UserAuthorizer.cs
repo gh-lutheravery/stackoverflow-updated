@@ -48,7 +48,7 @@ namespace WebApplication5.Controllers.BusinessControllers
                     break;
 
                 default:
-                    throw new ArgumentException("dynamic model argument is not a valid resource type.");
+                    throw new ArgumentException("\"dynamic\" model argument is not a valid resource type.");
             }
 
             return result;

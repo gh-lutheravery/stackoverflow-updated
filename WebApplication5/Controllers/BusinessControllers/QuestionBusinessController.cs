@@ -18,7 +18,6 @@ namespace WebApplication5.Controllers.BusinessControllers
             _contextService = context;
         }
 
-        // GET: QuestionAndAnswerController
         public QuestionAnswerViewModel PopulateQuestionAnswerViewModel(int questionId)
         {
             QuestionAnswerViewModel vm = new QuestionAnswerViewModel();
@@ -88,7 +87,6 @@ namespace WebApplication5.Controllers.BusinessControllers
             return newQuestion.Id;
         }
 
-        // POST: QuestionAndAnswerController/Create
         public void UpdateQuestion(QuestionUpdateViewModel vm)
         {
             var originalQuestion = _contextService.GetQuestionById(vm.OriginalQuestionId);
@@ -96,7 +94,7 @@ namespace WebApplication5.Controllers.BusinessControllers
             originalQuestion.Content = vm.Content;
             originalQuestion.DateUpdated = DateTime.Now;
 
-            // check if tags were updated to possibly avoid expensive func calls
+            // check if tags were updated to possibly avoid expensive func call
             if (!originalQuestion.Tags.Select(t => t.Title).SequenceEqual(vm.Tags))
             {
                 originalQuestion.Tags = _contextService.context.Tag
@@ -108,24 +106,12 @@ namespace WebApplication5.Controllers.BusinessControllers
             _contextService.context.SaveChanges();
         }
 
-        // GET: QuestionAndAnswerController/Edit/5
         public void DeleteQuestion(int id)
         {
             var question = _contextService.context.Question.Find(id);
 
             _contextService.context.Question.Remove(question);
             _contextService.context.SaveChanges();
-        }
-
-        public bool ValidateTagStrings(List<string> tags)
-        {
-            IQueryable<Tag> allTags = _contextService.context.Tag.AsNoTracking();
-            IQueryable<string> allStringTags = allTags.Select(t => t.Title);
-
-            if (tags.All(t => allStringTags.Contains(t)))
-                return true;
-            else
-                return false;
         }
 
         public void IncrementAnswerCount(int id, int incrementBy)

@@ -27,6 +27,7 @@ namespace WebApplication5.Controllers.BusinessControllers
             _context = context;
         }
 
+        // sorts/filters all questions from ef, randomizes sort of tags from ef and sets query variables
         public HomeViewModel PopulateHomeViewModel(int pageNumber, string? sortBy, string? filterBy)
         {
             HomeViewModel vm = new HomeViewModel();
@@ -112,6 +113,31 @@ namespace WebApplication5.Controllers.BusinessControllers
             return shuffled;
         }
 
+        // search matching questions based on its title, randomizes sort of tags from ef and sets query variables
+        public SearchViewModel PopulateSearchViewModel(int pageNumber, string searchTerm, string sortBy)
+        {
+            SearchViewModel vm = new SearchViewModel();
+
+            var allQuestions = _context.GetAllQuestions(true).ToList();
+
+            if (searchTerm.StartsWith("tag:"))
+                allQuestions = allQuestions.Where(q => QuestionContains(q, string.Empty, searchTerm)).ToList();
+            else
+                allQuestions = allQuestions.Where(q => QuestionContains(q, searchTerm)).ToList();
+
+            if (sortBy.IsNullOrEmpty())
+                vm.Questions = SortQuestions(allQuestions, sortBy).ToPagedList(pageNumber, _pageSize);
+
+            var tags = _context.GetAllTags(false)
+                .Select(t => t.Title).ToList();
+            vm.RandomTags = RandomizeTags(tags).Take(10).ToList();
+
+            vm.SortBy = sortBy;
+            vm.SearchQuery = searchTerm;
+
+            return vm;
+        }
+
         private bool QuestionContains(Question question, string searchTerm, string tagsString = "") 
         {
             if (!searchTerm.IsNullOrEmpty())
@@ -128,30 +154,6 @@ namespace WebApplication5.Controllers.BusinessControllers
             }
             
             return false;
-        }
-
-        public SearchViewModel PopulateSearchViewModel(int pageNumber, string searchTerm, string sortBy)
-        {
-            SearchViewModel vm = new SearchViewModel();
-
-            var allQuestions = _context.GetAllQuestions(true).ToList();
-
-            if (searchTerm.StartsWith("tag:"))
-                allQuestions = allQuestions.Where(q => QuestionContains(q, string.Empty, searchTerm)).ToList();
-            else
-                allQuestions = allQuestions.Where(q => QuestionContains(q, searchTerm)).ToList();
-
-            if (sortBy.IsNullOrEmpty()) 
-                vm.Questions = SortQuestions(allQuestions, sortBy).ToPagedList(pageNumber, _pageSize);
-
-            var tags = _context.GetAllTags(false)
-                .Select(t => t.Title).ToList();
-            vm.RandomTags = RandomizeTags(tags).Take(10).ToList();
-
-            vm.SortBy = sortBy;
-            vm.SearchQuery = searchTerm;
-
-            return vm;
         }
     }
 }

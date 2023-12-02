@@ -32,7 +32,8 @@ namespace WebApplication5.Controllers.BusinessControllers
             return vm;
         }
 
-        public (ClaimsIdentity, AuthenticationProperties)? 
+        // if user is found, make a claim based on the user id and configure cookie settings
+        public (ClaimsIdentity, AuthenticationProperties)?
             AuthenticateUser(LoginViewModel vm, PasswordHasher<Profile> hasher)
         { 
             var profile = ValidateLogin(vm, hasher);
