@@ -113,3 +113,7 @@ body {
         width: auto;
     }
 }
+
+#tags-input {
+    width: 10rem;
+}
