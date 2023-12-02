@@ -44,7 +44,10 @@ namespace WebApplication5.Controllers.WebControllers
             {
                 var loginInfo = _businessController.AuthenticateUser(vm, new PasswordHasher<Profile>());
                 if (loginInfo == null)
+                {
+                    ViewData["IncorrectInput"] = "Your email or password is incorrect; try again.";
                     return View(vm);
+                }
 
                 var claims = loginInfo.Value.Item1;
                 var authProperties = loginInfo.Value.Item2;
@@ -111,14 +114,9 @@ namespace WebApplication5.Controllers.WebControllers
                 return Forbid();
 
             if (ModelState.IsValid)
-            {
                 _businessController.ProfileUpdate(vm.UpdatedProfile);
-                return RedirectToAction(nameof(Details));
-            }
-            else
-            {
-                return View(vm);
-            }
+            
+            return RedirectToAction(nameof(Details), routeValues: new { id = vm.UpdatedProfile.OriginalProfileId });
         }
 
         [Authorize]
