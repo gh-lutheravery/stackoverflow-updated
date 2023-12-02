@@ -10,11 +10,11 @@ namespace WebApplication5.ViewModels.QuestionAndAnswer
 
         public List<string> Tags { get; set; }
 
-        [Required]
+        [MinLength(ValidationConstants.MinPostTitleLength)]
         [MaxLength(ValidationConstants.MaxPostTitleLength)]
         public string Title { get; set; }
 
-        [Required]
+        [MinLength(ValidationConstants.MinPostContentLength)]
         [MaxLength(ValidationConstants.MaxPostContentLength)]
         public string Content { get; set; }
 

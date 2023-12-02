@@ -4,7 +4,7 @@ namespace WebApplication5.ViewModels.QuestionAndAnswer
 {
     public class AnswerUpdateViewModel
     {
-        [Required]
+        [MinLength(ValidationConstants.MinPostContentLength)]
         [MaxLength(ValidationConstants.MaxPostContentLength)]
         public string Content { get; set; }
 
