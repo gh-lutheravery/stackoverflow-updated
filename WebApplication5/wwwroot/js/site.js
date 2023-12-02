@@ -1,7 +1,24 @@
-﻿// Requires jquery for vote count functions, and quill for init function
+﻿/// Requires jquery for vote count functions, and quill for init function
+
+
+// slice content to display as plaintext later
+function slicePostContent(text) {
+    let slicedText = text.slice(0, 100);
+    let pattern = /\r\n/gi;
+    let cleanedText = slicedText.replaceAll(pattern, '');
+    return cleanedText;
+}
 
 
 
+// toggles navbar contents for mobile
+function toggleNavbarBurger(burger) {
+    var target = burger.dataset.target;
+    var targetElement = document.getElementById(target);
+    targetElement.classList.toggle("is-active");
+}
+
+// init default settings for quill objects
 function initDefaultQuill(containerId) {
     let quillObj = new Quill(containerId, {
         modules: {
@@ -19,7 +36,7 @@ function initDefaultQuill(containerId) {
 }
 
 
-// Functions for modals used for various CRUD views
+/// Functions for modals used for various CRUD views
 function openModal(modal) {
     modal.classList.add('is-active');
 }
@@ -50,74 +67,3 @@ function closeModal(modal) {
     });
 });
 
-
-
-// Functions for voting in QuestionAnswer view
-function handleQuestionVote(element, color, vote) {
-    // vote is true when upvoting, and vice versa
-    element.css('background-color', color);
-
-    incrementVoteCount($('#ques-vote-count'), vote);
-
-    // $.ajax({
-    //     url: '@Url.Action("UpdateVote", "Question")',
-    //     method: 'POST',
-    //     data: { questionId: @Model.Question.Id, upVote: vote },
-    //     contentType: "application/json; charset=utf-8",
-    //     dataType: "json",
-    //     error: function() {
-    //         console.log('Error voting post.');
-    //     }
-    // });
-}
-
-function handleAnswerVote(element, color, vote) {
-    element.css('background-color', color);
-
-    let voteContainer = element.parent().parent();
-    let voteCountEl = voteContainer.children('.ans-vote-count')[0];
-
-    incrementVoteCount(voteCountEl, vote);
-
-    // $.ajax({
-    //     url: '@Url.Action("UpdateVote", "Answer")',
-    //     method: 'POST',
-    //     data: { answerId: @Model.Question.Id, upVote: vote },
-    //     contentType: "application/json; charset=utf-8",
-    //     dataType: "json",
-    //     error: function() {
-    //         console.log('Error voting post.');
-    //     }
-    // });
-}
-
-function incrementVoteCount(element, vote) {
-    let voteCount = Number(element.text());
-
-    if (vote) {
-        element.text(
-            String(voteCount + 1)
-        );
-    }
-    else {
-        element.text(
-            String(voteCount - 1)
-        );
-    }
-}
-
-$('#ques-up-vote').click(function () {
-    handleQuestionVote($(this), "#0066ffff", true)
-});
-
-$('#ques-down-vote').click(function () {
-    handleQuestionVote($(this), "#42414cff", false)
-});
-
-$('.ans-up-vote').click(function () {
-    handleAnswerVote($(this), "#0066ffff", true)
-});
-
-$('.ans-down-vote').click(function () {
-    handleAnswerVote($(this), "#42414cff", false)
-});
