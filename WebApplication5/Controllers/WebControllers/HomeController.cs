@@ -19,9 +19,13 @@ namespace WebApplication5.Controllers.WebControllers
             return View(vm);
         }
 
-        public ActionResult Search(string searchQuery, int pageNumber = 1)
+        public ActionResult Search(string searchQuery, string sortBy = "", int pageNumber = 1)
         {
-            SearchViewModel vm = _businessController.PopulateSearchViewModel(pageNumber, searchQuery);
+            SearchViewModel vm = _businessController.PopulateSearchViewModel(pageNumber, searchQuery, sortBy);
+
+            // SearchQuery string used in Layout view for search bar
+            ViewData["SearchQuery"] = vm.SearchQuery;
+
             return View(vm);
         }
     }
