@@ -4,11 +4,6 @@
 
 @model WebApplication5.ViewModels.Home.SearchViewModel
 
-@{
-    
-}
-
-
 @section Head {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@creativebulma/bulma-tagsinput/dist/css/bulma-tagsinput.min.css" />
 }
@@ -23,10 +18,12 @@
             <div class="level-left">
                 <div class="field has-addons level-item">
                     <p class="control">
-                        <a class="button" asp-controller="Home" asp-action="Search" asp-route-sortBy="Newest" asp-route-pageNumber="@Model.Questions.PageNumber">Sort by Newest</a>
+                        <a class="button" asp-controller="Home" asp-action="Search" asp-route-sortBy="Newest" asp-route-pageNumber="@Model.Questions.PageNumber"
+                            asp-route-searchQuery="@Model.SearchQuery">Sort by Newest</a>
                     </p>
                     <p class="control">
-                        <a class="button" asp-controller="Home" asp-action="Search" asp-route-sortBy="Unanswered" asp-route-pageNumber="@Model.Questions.PageNumber">Sort by Unanswered</a>
+                        <a class="button" asp-controller="Home" asp-action="Search" asp-route-sortBy="Unanswered" asp-route-pageNumber="@Model.Questions.PageNumber"
+                           asp-route-searchQuery="@Model.SearchQuery">Sort by Unanswered</a>
                     </p>
                 </div>
             </div>
