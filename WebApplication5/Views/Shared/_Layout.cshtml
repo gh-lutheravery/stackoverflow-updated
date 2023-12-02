@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WebApplication5 - @ViewData["Title"]</title>
-    @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> *@
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -15,27 +15,26 @@
     <header>
         <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
-                <a class="navbar-item" asp-controller="Home" asp-action="Index">
+                <a class="navbar-item" asp-controller="Home" asp-action="Index" style="background-color: #272727;">
                     <img src="~/logo.png">
                 </a>
 
-@*                 <a class="navbar-item" style="font-size:1.5rem; font-weight:700;" asp-area="" asp-controller="Home" asp-action="Index">Stack Overflow Clone</a> *@
-                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="soc-menu" onclick="toggleNavbarBurger(this)">
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
                 </a>
             </div>
-            <div class="navbar-menu">
+            <div class="navbar-menu" id="soc-menu">
                 <div class="navbar-start">
                     
                 </div>
 
                 <div class="navbar-item ml-auto mr-auto">
-                    @using (Html.BeginForm("Search", "Home", FormMethod.Get, new { @autocomplete = "off", @class = "control has-icons-left", @style = "width: 40vw" }))
+                    @using (Html.BeginForm("Search", "Home", FormMethod.Get, new { @autocomplete = "off", @class = "control has-icons-left", @id = "search-box" }))
                     {
                         @Html.AntiForgeryToken()
-                        <input class="input is-rounded" name="searchQuery" type="text" placeholder="Search All Questions" class="form-control-lg" />
+                        <input class="input is-rounded" name="searchQuery" type="text" placeholder="Search All Questions" value="@ViewData["SearchQuery"]" />
                         <span class="icon is-small is-left">
                             <i class="bi bi-search"></i>
                         </span>
@@ -45,20 +44,20 @@
                     @if (User.Claims.Any())
                     {
                         <div class="navbar-nav flex-grow-2 navbar-item">
-                            <a class="button navbar-link has-background-link is-arrowless mr-2" asp-area="" asp-controller="Profile" asp-action="Details" asp-route-id="@User.FindFirst("ID").Value">Profile</a>
-                            <a class="button navbar-link has-background-black is-arrowless" asp-area="" asp-controller="Profile" asp-action="Logout">Logout</a>
+                            <a class="button navbar-link has-background-link is-arrowless mr-2 has-text-white" asp-area="" asp-controller="Profile" asp-action="Details" asp-route-id="@User.FindFirst("ID").Value">Profile</a>
+                            <a class="button navbar-link has-background-black is-arrowless has-text-white" asp-area="" asp-controller="Profile" asp-action="Logout">Logout</a>
                         </div>
                     }
                     else
                     {
                         <div class="navbar-nav flex-grow-2 navbar-item buttons">
-                            <a class="button bg-so navbar-link is-arrowless" style="border:none" asp-controller="Profile" asp-action="Register">
+                            <a class="button bg-so navbar-link is-arrowless has-text-white" style="border:none" asp-controller="Profile" asp-action="Register">
                                 <span class="icon is-small">
                                     <i class="bi bi-box-arrow-in-right"></i>
                                 </span>
                                 <strong>Register</strong>
                             </a>
-                            <a class="button is-black navbar-link is-arrowless" asp-controller="Profile" asp-action="Login">Login</a>
+                            <a class="button is-black navbar-link is-arrowless has-text-white" asp-controller="Profile" asp-action="Login">Login</a>
                         </div>
                     }
                 </div>
@@ -67,8 +66,8 @@
     </header>
 
     @await RenderSectionAsync("OutsideContainer", required: false)
-    <div class="container">
-        <main role="main" class="pb-3">
+    <div class="container p-3">
+        <main role="main">
             @RenderBody()
         </main>
     </div>
