@@ -31,7 +31,7 @@ namespace WebApplication5.Controllers.WebControllers
 
         public ActionResult QuestionCreate()
         {
-            QuestionCreateViewModel vm = new QuestionCreateViewModel(_questionBusinessController);
+            QuestionCreateViewModel vm = new QuestionCreateViewModel();
 
             vm.AllTags = _tagBusinessController.GetAllTagStrings();
             return View(vm);
@@ -44,8 +44,8 @@ namespace WebApplication5.Controllers.WebControllers
         {
             if (ModelState.IsValid)
             {
-                _questionBusinessController.SubmitQuestionForm(viewModel, User);
-                return RedirectToAction(nameof(Details));
+                int newId = _questionBusinessController.SubmitQuestionForm(viewModel, User);
+                return RedirectToAction(nameof(Details), routeValues: new { id = newId });
             }
             else
             {
@@ -56,7 +56,8 @@ namespace WebApplication5.Controllers.WebControllers
         public ActionResult QuestionUpdate(int id)
         {
             QuestionUpdateViewModel vm = new QuestionUpdateViewModel();
-            vm.OriginalQuestion = _questionBusinessController.GetQuestion(id);
+            vm.AllTags = _tagBusinessController.GetAllTagStrings();
+            vm.OriginalQuestion = _questionBusinessController.GetQuestionWithHtml(id);
             vm.OriginalQuestionId = id;
 
             return View(vm);
@@ -66,13 +67,13 @@ namespace WebApplication5.Controllers.WebControllers
         [ValidateAntiForgeryToken]
         public ActionResult QuestionUpdate(QuestionUpdateViewModel viewModel)
         {
-            if (!_userAuthorizer.IsUserTheAuthor(viewModel.OriginalQuestion.Id, User))
+            if (!_userAuthorizer.IsUserTheAuthorByResourceId(viewModel.OriginalQuestionId, new Question(), User))
                 return Forbid();
 
             if (ModelState.IsValid)
             {
                 _questionBusinessController.UpdateQuestion(viewModel);
-                return RedirectToAction(nameof(Details));
+                return RedirectToAction(nameof(Details), routeValues: new { id = viewModel.OriginalQuestionId });
             }
             else
             {
@@ -82,13 +83,23 @@ namespace WebApplication5.Controllers.WebControllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult QuestionDelete(int questionId)
+        public ActionResult QuestionDelete(int id)
         {
-            if (!_userAuthorizer.IsUserTheAuthorByResourceId(questionId, new Question(), User))
+            if (!_userAuthorizer.IsUserTheAuthorByResourceId(id, new Question(), User))
                 return Forbid();
 
-            _questionBusinessController.DeleteQuestion(questionId);
+            _questionBusinessController.DeleteQuestion(id);
             return RedirectToAction(nameof(HomeController.Index), "Home");
+        }
+
+        [HttpPost]
+        public ActionResult UpdateVote([FromBody] int answerId, [FromBody] int incrementBy)
+        {
+            bool result = _questionBusinessController.IncrementVoteCount(answerId, incrementBy);
+            if (result == false)
+                return NotFound();
+
+            return Ok();
         }
     }
 }
