@@ -80,3 +80,36 @@ body {
 .post-view {
     border: none !important;
 }
+
+#search-box {
+    width: 100%;
+}
+
+
+@media screen and (min-width: 1024px) {
+    #search-box {
+        width: 40vw;
+    }
+}
+
+.bg-downvote {
+    background-color: #42414cff;
+}
+
+.mini-media-rows {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    line-height: 2.5;
+    width: 13%;
+}
+
+@media screen and (max-width: 450px) {
+    .mini-media-rows {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        line-height: 2.5;
+        width: auto;
+    }
+}
