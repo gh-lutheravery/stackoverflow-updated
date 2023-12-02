@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using WebApplication5.Controllers.BusinessControllers;
 using WebApplication5.Controllers.DataServices;
 using WebApplication5.Data;
@@ -14,8 +14,9 @@ builder.Services.AddSqlServer<StackOverflowCloneContext>(Environment.GetEnvironm
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie();
 
-builder.Services.ConfigureApplicationCookie(opt => { 
-    opt.AccessDeniedPath = "/Error/Forbidden"; 
+builder.Services.AddAuthorization(options =>
+{
+    options.DefaultPolicy = new AuthorizationPolicyBuilder("Cookies").RequireAuthenticatedUser().Build();
 });
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
@@ -57,14 +58,6 @@ app.Use(async (ctx, next) =>
         ctx.Request.Path = "/Error/PageNotFound";
         await next();
     }
-
-    else if (ctx.Response.StatusCode == 403 && !ctx.Response.HasStarted) 
-    {
-        string originalPath = ctx.Request.Path.Value;
-        ctx.Items["originalPath"] = originalPath;
-        ctx.Request.Path = "/Error/Forbidden";
-        await next();
-    }
 });
 
 app.UseStaticFiles();
@@ -72,11 +65,11 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}");
-
 
 app.Run();
