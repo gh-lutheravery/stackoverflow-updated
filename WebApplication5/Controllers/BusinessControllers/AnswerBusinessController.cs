@@ -18,20 +18,6 @@ namespace WebApplication5.Controllers.BusinessControllers
             _questionBusiness = questionBusiness;
         }
 
-        public bool IncrementVoteCount(int id, int incrementBy)
-        {
-            var answer = _contextService.context.Answer.Find(id);
-            if (answer != null) 
-            {
-                answer.VoteCount += incrementBy;
-                _contextService.context.Update(answer);
-                _contextService.context.SaveChanges();
-
-                return true;
-            }
-            return false;
-        }
-
         public void SubmitAnswerForm(AnswerCreateViewModel answerForm, ClaimsPrincipal userCookie)
         {
             Answer newAnswer = new Answer();
@@ -73,6 +59,20 @@ namespace WebApplication5.Controllers.BusinessControllers
             _contextService.context.SaveChanges();
 
             _questionBusiness.IncrementAnswerCount(answer.AssociatedQuestion.Id, -1);
+        }
+
+        public bool IncrementVoteCount(int id, int incrementBy)
+        {
+            var answer = _contextService.context.Answer.Find(id);
+            if (answer != null)
+            {
+                answer.VoteCount += incrementBy;
+                _contextService.context.Update(answer);
+                _contextService.context.SaveChanges();
+
+                return true;
+            }
+            return false;
         }
     }
 }
