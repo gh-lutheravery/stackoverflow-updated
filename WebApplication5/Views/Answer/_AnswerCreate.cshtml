@@ -19,6 +19,13 @@
             </div>
         </div>
 
+        @if (!Html.ViewData.ModelState.IsValid)
+        {
+            <div class="notification is-warning " role="alert">
+                @Html.ValidationSummary()
+            </div>
+        }
+
         <div class="field is-grouped">
             <div class="control">
                 <input type="submit" name="submit" class="button is-link" value="Submit Answer" />
