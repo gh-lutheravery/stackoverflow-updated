@@ -18,6 +18,20 @@ namespace WebApplication5.Controllers.BusinessControllers
             _questionBusiness = questionBusiness;
         }
 
+        public bool IncrementVoteCount(int id, int incrementBy)
+        {
+            var answer = _contextService.context.Answer.Find(id);
+            if (answer != null) 
+            {
+                answer.VoteCount += incrementBy;
+                _contextService.context.Update(answer);
+                _contextService.context.SaveChanges();
+
+                return true;
+            }
+            return false;
+        }
+
         public void SubmitAnswerForm(AnswerCreateViewModel answerForm, ClaimsPrincipal userCookie)
         {
             Answer newAnswer = new Answer();
@@ -35,7 +49,7 @@ namespace WebApplication5.Controllers.BusinessControllers
             _contextService.context.Answer.Add(newAnswer);
             _contextService.context.SaveChanges();
 
-            _questionBusiness.IncrementAnswerCount(answerForm.AssociatedQuestionId);
+            _questionBusiness.IncrementAnswerCount(answerForm.AssociatedQuestionId, 1);
         }
 
         // POST: AnswerAndAnswerController/Create
@@ -53,10 +67,12 @@ namespace WebApplication5.Controllers.BusinessControllers
         // GET: AnswerAndAnswerController/Edit/5
         public void DeleteAnswer(int id)
         {
-            var question = _contextService.context.Answer.Find(id);
+            var answer = _contextService.GetAnswerWithQuestion(id);
 
-            _contextService.context.Answer.Remove(question);
+            _contextService.context.Answer.Remove(answer);
             _contextService.context.SaveChanges();
+
+            _questionBusiness.IncrementAnswerCount(answer.AssociatedQuestion.Id, -1);
         }
     }
 }
