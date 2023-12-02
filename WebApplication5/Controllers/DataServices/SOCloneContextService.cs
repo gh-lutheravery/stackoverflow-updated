@@ -20,8 +20,33 @@ namespace WebApplication5.Controllers.DataServices
             var profile = context.Profile
                 .Include(p => p.Questions)
                 .Include(p => p.Answers)
-                .AsNoTracking()
                 .SingleOrDefault(p => p.Id == id);
+
+            return profile;
+        }
+
+        public Profile? GetProfileWithQA(int? id, bool deepInclude)
+        {
+            if (id == null)
+                return null;
+
+            Profile? profile;
+            if (deepInclude)
+            {
+                profile = context.Profile
+                    .Include(p => p.Questions)
+                    .ThenInclude(q => q.Tags)
+                    .Include(p => p.Answers)
+                    .ThenInclude(q => q.AssociatedQuestion)
+                    .SingleOrDefault(p => p.Id == id);
+            }
+            else
+            {
+                profile = context.Profile
+                    .Include(p => p.Questions)
+                    .Include(p => p.Answers)
+                    .SingleOrDefault(p => p.Id == id);
+            }
 
             return profile;
         }
@@ -44,13 +69,11 @@ namespace WebApplication5.Controllers.DataServices
             {
                 questions = context.Question
                     .Include(p => p.Tags)
-                    .Include(p => p.Author)
-                    .AsNoTracking();
+                    .Include(p => p.Author);
             }
             else
             {
-                questions = context.Question
-                    .AsNoTracking();
+                questions = context.Question;
             }
 
             return questions;
@@ -61,7 +84,6 @@ namespace WebApplication5.Controllers.DataServices
             var question = context.Question
                 .Include(p => p.Tags)
                 .Include(p => p.Author)
-                .AsNoTracking()
                 .SingleOrDefault(p => p.Id == id);
 
             return question;
@@ -81,10 +103,18 @@ namespace WebApplication5.Controllers.DataServices
         public IQueryable<Answer> GetAllAnswers()
         {
             IQueryable<Answer> answers = context.Answer
-                .Include(a => a.Author)
-                .AsNoTracking();
+                .Include(a => a.Author);
             
             return answers;
+        }
+
+        public Answer GetAnswerWithQuestion(int id)
+        {
+            Answer answer = context.Answer
+                .Include(a => a.AssociatedQuestion)
+                .SingleOrDefault(p => p.Id == id);
+
+            return answer;
         }
 
         // tag methods
