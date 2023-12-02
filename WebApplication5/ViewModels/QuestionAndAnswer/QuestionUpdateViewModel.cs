@@ -7,7 +7,7 @@ namespace WebApplication5.ViewModels.QuestionAndAnswer
     {
         public string[] Tags { get; set; }
 
-        public List<string> AllTags { get; set; }
+        public List<string>? AllTags { get; set; }
 
         [Required]
         [MaxLength(ValidationConstants.MaxPostTitleLength)]
