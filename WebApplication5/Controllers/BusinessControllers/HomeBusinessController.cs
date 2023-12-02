@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using PagedList.Core.Mvc;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Security.Policy;
 using WebApplication5.Controllers.DataServices;
 using WebApplication5.Models;
 using WebApplication5.ViewModels.Home;
@@ -24,80 +27,82 @@ namespace WebApplication5.Controllers.BusinessControllers
             _context = context;
         }
 
-
-        public HomeViewModel PopulateHomeViewModel(int pageNumber, string sortBy, string filterBy)
+        public HomeViewModel PopulateHomeViewModel(int pageNumber, string? sortBy, string? filterBy)
         {
             HomeViewModel vm = new HomeViewModel();
-            vm.Questions = _context.GetAllQuestions(true)
-                .ToPagedList(pageNumber, _pageSize);
+            var allQuestions = _context.GetAllQuestions(true).ToList();
+
+            if (!sortBy.IsNullOrEmpty() && _sortTypes.Contains(sortBy)) 
+            {
+                allQuestions = SortQuestions(allQuestions, sortBy);
+            }
+
+            if (!filterBy.IsNullOrEmpty() && _filterTypes.Contains(filterBy))
+            {
+                allQuestions = FilterQuestions(allQuestions, filterBy);
+            }
+
+            vm.Questions = allQuestions.ToPagedList(pageNumber, _pageSize);
 
             var tags = _context.GetAllTags(false)
                 .Select(t => t.Title).ToList();
             vm.RandomTags = RandomizeTags(tags).Take(10).ToList();
 
-            if (!sortBy.IsNullOrEmpty() && _sortTypes.Contains(sortBy)) 
-            {
-                SortQuestions(vm, sortBy, pageNumber);
-            }
+            vm.SortBy = sortBy;
+            vm.FilterBy = filterBy;
 
-            if (!filterBy.IsNullOrEmpty() && _filterTypes.Contains(filterBy))
-            {
-                FilterQuestions(vm, filterBy, pageNumber);
-            }
             return vm;
         }
 
 
-        private void SortQuestions(HomeViewModel vm, string sortBy, int pageNum)
+        private List<Question> SortQuestions(List<Question> questions, string sortBy)
         {
+            var newQuestions = new List<Question>();
+            
             switch (sortBy)
             {
                 case "Newest":
-                    vm.Questions = vm.Questions.OrderByDescending(q => q.DateCreated)
-                        .ToPagedList(pageNum, _pageSize);
-                    break;
-                case "Unanswered":
+                    newQuestions = questions.OrderByDescending(q => q.DateCreated).ToList();
+                    return newQuestions;
 
-                    break;
+                case "Unanswered":
+                    newQuestions = questions.OrderBy(q => q.AnswerCount).ToList();
+                    return newQuestions;
+
                 default:
                     break;
             }
+            return questions;
         }
 
 
-        private void FilterQuestions(HomeViewModel vm, string filterBy, int pageNum)
+        private List<Question> FilterQuestions(List<Question> oldQuestions, string filterBy)
         {
+            var newQuestions = new List<Question>();
             switch (filterBy)
             {
                 case "NoAnswers":
-                    var noAnswerquestions = new List<Question>();
-                    foreach (var question in vm.Questions)
+                    foreach (var question in oldQuestions)
                     {
-                        if (!_context.context.Answer
-                            .Where(a => a.AssociatedQuestion == question)
-                            .Any())
-                            noAnswerquestions.Add(question);
+                        if (question.AnswerCount == 0)
+                            newQuestions.Add(question);
                     }
 
-                    vm.Questions = noAnswerquestions.ToPagedList(pageNum, _pageSize);
-                    break;
+                    return newQuestions;
 
                 case "NoAcceptedAnswers":
-                    var noAccAnswerquestions = new List<Question>();
-                    foreach (var question in vm.Questions)
+                    foreach (var question in oldQuestions)
                     {
-                        if (_context.context.Answer
-                            .Where(a => a.AssociatedQuestion == question && !a.IsAccepted)
-                            .Any())
-                            noAccAnswerquestions.Add(question);
+                        if (question.AcceptedAnswerId == 0 || question.AcceptedAnswerId == null)
+                            newQuestions.Add(question);
                     }
 
-                    vm.Questions = noAccAnswerquestions.ToPagedList(pageNum, _pageSize);
-                    break;
+                    return newQuestions;
 
                 default:
                     break;
             }
+            return oldQuestions;
         }
 
         private List<string> RandomizeTags(List<string> tags)
@@ -107,15 +112,44 @@ namespace WebApplication5.Controllers.BusinessControllers
             return shuffled;
         }
 
-        public SearchViewModel PopulateSearchViewModel(int pageNumber, string searchTerm)
+        private bool QuestionContains(Question question, string searchTerm, string tagsString = "") 
+        {
+            if (!searchTerm.IsNullOrEmpty())
+            {
+                if (question.Title.ToLower().Contains(searchTerm.ToLower()))
+                    return true;
+            }
+
+            if (!tagsString.IsNullOrEmpty())
+            {
+                string tagSearchTerm = tagsString.Split("tag:")[1];
+                if (question.Tags.Where(t => t.Title.ToLower() == tagSearchTerm.ToLower()).Any())
+                    return true;
+            }
+            
+            return false;
+        }
+
+        public SearchViewModel PopulateSearchViewModel(int pageNumber, string searchTerm, string sortBy)
         {
             SearchViewModel vm = new SearchViewModel();
-            var homeView = PopulateHomeViewModel(pageNumber, "", "");
 
+            var allQuestions = _context.GetAllQuestions(true).ToList();
 
-            vm.Questions = homeView.Questions.Where(q => q.Title.Contains(searchTerm)).ToPagedList();
+            if (searchTerm.StartsWith("tag:"))
+                allQuestions = allQuestions.Where(q => QuestionContains(q, string.Empty, searchTerm)).ToList();
+            else
+                allQuestions = allQuestions.Where(q => QuestionContains(q, searchTerm)).ToList();
+
+            if (sortBy.IsNullOrEmpty()) 
+                vm.Questions = SortQuestions(allQuestions, sortBy).ToPagedList(pageNumber, _pageSize);
+
+            var tags = _context.GetAllTags(false)
+                .Select(t => t.Title).ToList();
+            vm.RandomTags = RandomizeTags(tags).Take(10).ToList();
+
+            vm.SortBy = sortBy;
             vm.SearchQuery = searchTerm;
-            vm.RandomTags = homeView.RandomTags;
 
             return vm;
         }
