@@ -25,27 +25,11 @@ namespace WebApplication5.Controllers.BusinessControllers
         public ProfileViewModel PopulateProfileViewModel(int profileId)
         {
             ProfileViewModel vm = new ProfileViewModel();
-            vm.CurrentProfile = GetProfileWithQA(profileId);
+            vm.CurrentProfile = _contextService.GetProfileWithQA(profileId, true);
             vm.UpdatedProfile = new ProfileUpdateViewModel();
 
             vm.UpdatedProfile.OriginalProfileId = profileId;
             return vm;
-        }
-
-
-            // GET: QuestionAndAnswerController
-            public Profile? GetProfileWithQA(int? id)
-        {
-            if (id == null) 
-                return null;
-
-            Profile? profile = _contextService.context.Profile
-                .Include(p => p.Questions)
-                .ThenInclude(q => q.Tags)
-                .Include(p => p.Answers)
-                .SingleOrDefault(p => p.Id == id);
-
-            return profile;
         }
 
         public (ClaimsIdentity, AuthenticationProperties)? 
