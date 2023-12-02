@@ -8,5 +8,9 @@ namespace WebApplication5.ViewModels.Home
 		public IPagedList<Question> Questions { get; set; }
 
 		public List<string> RandomTags { get; set; }
-	}
+
+		public string SortBy { get; set; }
+
+        public string FilterBy { get; set; }
+    }
 }
