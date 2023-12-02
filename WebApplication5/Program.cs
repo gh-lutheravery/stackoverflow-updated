@@ -39,12 +39,15 @@ builder.Services.AddScoped<UserAuthorizer>();
 
 var app = builder.Build();
 
-app.CreateDevDbIfNotExists();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-	app.UseExceptionHandler("/Error/ServerError");
+    app.MigrateSchema();
+    app.UseExceptionHandler("/Error/ServerError");
+} 
+else 
+{
+    app.CreateDevDbIfNotExists();
 }
 
 app.Use(async (ctx, next) =>
