@@ -23,26 +23,28 @@ namespace WebApplication5.Controllers.BusinessControllers
         {
             QuestionAnswerViewModel vm = new QuestionAnswerViewModel();
 
-            var question = _contextService.GetQuestionById(questionId);  
-            question.Content = ConvertQuillDeltaToHtml(question.Content);
+            var question = GetQuestionWithHtml(questionId);  
             vm.Question = question;
 
             var answers = _contextService.GetAllAnswers()
                 .Where(a => a.AssociatedQuestion.Id == vm.Question.Id).ToList();
 
-            foreach (var ans in answers)
-                ans.Content = ConvertQuillDeltaToHtml(ans.Content);
+            for (int index = 0; index < answers.Count; index++)
+            {
+                answers[index].Content = ConvertQuillDeltaToHtml(answers[index].Content);
+            }
 
             vm.Answers = answers;
             vm.AnswerCreateForm = new AnswerCreateViewModel();
             vm.AnswerCreateForm.AssociatedQuestionId = vm.Question.Id;
+
             vm.AnswerUpdateForm = new AnswerUpdateViewModel();
             vm.AnswerUpdateForm.AssociatedQuestionId = vm.Question.Id;
 
             return vm;
         }
 
-        public Question GetQuestion(int questionId)
+        public Question GetQuestionWithHtml(int questionId)
         {
             var question = _contextService.GetQuestionById(questionId);
             question.Content = ConvertQuillDeltaToHtml(question.Content);
@@ -61,7 +63,7 @@ namespace WebApplication5.Controllers.BusinessControllers
             return htmlConverter.Convert();
         }
 
-        public void SubmitQuestionForm(QuestionCreateViewModel questionForm, ClaimsPrincipal userCookie)
+        public int SubmitQuestionForm(QuestionCreateViewModel questionForm, ClaimsPrincipal userCookie)
         {
             Question newQuestion = new Question();
 
@@ -75,7 +77,7 @@ namespace WebApplication5.Controllers.BusinessControllers
             newQuestion.Author = _contextService.context.Profile.Find(userId);
 
             newQuestion.Title = questionForm.Title;
-            newQuestion.Content = newQuestion.Content;
+            newQuestion.Content = questionForm.Content;
             newQuestion.ViewCount = 0;
             newQuestion.TruncatedContent = questionForm.TruncatedContent;
             newQuestion.DateCreated = DateTime.Now;
@@ -83,26 +85,26 @@ namespace WebApplication5.Controllers.BusinessControllers
             newQuestion.AnswerCount = 0;
 
             _contextService.CreateQuestion(newQuestion);
+            return newQuestion.Id;
         }
 
         // POST: QuestionAndAnswerController/Create
         public void UpdateQuestion(QuestionUpdateViewModel vm)
         {
+            var originalQuestion = _contextService.GetQuestionById(vm.OriginalQuestionId);
+            originalQuestion.Title = vm.Title;
+            originalQuestion.Content = vm.Content;
+            originalQuestion.DateUpdated = DateTime.Now;
+
             // check if tags were updated to possibly avoid expensive func calls
-            if (vm.OriginalQuestion.Tags.Select(t => t.Title) != vm.Tags)
+            if (!originalQuestion.Tags.Select(t => t.Title).SequenceEqual(vm.Tags))
             {
-                vm.OriginalQuestion.Tags = _contextService.context.Tag
+                originalQuestion.Tags = _contextService.context.Tag
                     .Where(t => vm.Tags.Contains(t.Title))
                     .ToList();
             }
 
-            vm.OriginalQuestion.Title = vm.Title;
-            vm.OriginalQuestion.Content = vm.Content;
-            vm.OriginalQuestion.ViewCount = 0;
-            vm.OriginalQuestion.TruncatedContent = vm.TruncatedContent;
-            vm.OriginalQuestion.DateUpdated = DateTime.Now;
-
-            _contextService.context.Question.Update(vm.OriginalQuestion);
+            _contextService.context.Question.Update(originalQuestion);
             _contextService.context.SaveChanges();
         }
 
@@ -126,13 +128,27 @@ namespace WebApplication5.Controllers.BusinessControllers
                 return false;
         }
 
-        public void IncrementAnswerCount(int id)
+        public void IncrementAnswerCount(int id, int incrementBy)
         {
             var question = _contextService.context.Question.Find(id);
-            question.AnswerCount += 1;
+            question.AnswerCount += incrementBy;
 
             _contextService.context.Update(question);
             _contextService.context.SaveChanges();
+        }
+
+        public bool IncrementVoteCount(int id, int incrementBy)
+        {
+            var question = _contextService.context.Question.Find(id);
+            if (question != null)
+            {
+                question.VoteCount += incrementBy;
+                _contextService.context.Update(question);
+                _contextService.context.SaveChanges();
+
+                return true;
+            }
+            return false;
         }
     }
 }
