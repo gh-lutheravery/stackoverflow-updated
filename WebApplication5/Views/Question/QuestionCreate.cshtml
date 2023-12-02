@@ -29,7 +29,7 @@
             <label class="label" for="title">Title</label>
             <p>Make sure your title is concise and specific.</p>
             <div class="control">
-                <input class="input" type="text" placeholder="Title">
+                <input class="input" type="text" placeholder="Title" asp-for="@Model.Title"/>
             </div>
         </div>
 
@@ -57,8 +57,14 @@
                     </select>
                 </div>
             </div>
-            @* <input type="hidden" id="tags" asp-for="@Model.Tags" /> *@
         </div>
+
+        @if (!Html.ViewData.ModelState.IsValid)
+        {
+            <div class="notification is-warning " role="alert">
+                @Html.ValidationSummary()
+            </div>
+        }
 
         <div class="field is-grouped">
             <div class="control">
@@ -71,11 +77,13 @@
 
 @section Scripts {
     <script>
-        var questionQuill = initDefaultQuill('#editor');
+        var newQuestionQuill = initDefaultQuill('#editor');
 
         function handleQuestionSubmit() {
-            document.getElementById('quill-question-content').value = JSON.stringify(questionQuill.getContents());
-            document.getElementById('quill-question-truncated-content').value = questionQuill.getText().slice(0, 167) + "...";
+            document.getElementById('quill-question-content').value = JSON.stringify(newQuestionQuill.getContents());
+
+            let cleanedText = slicePostContent(newQuestionQuill.getText());
+            document.getElementById('quill-question-truncated-content').value = cleanedText + '...';
             //document.getElementById('tags').value = JSON.stringify(tagify.value);
         }
 

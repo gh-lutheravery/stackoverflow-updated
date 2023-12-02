@@ -48,7 +48,7 @@
 
         <div class="field is-grouped">
             <div class="control">
-                <input type="submit" name="submit" class="button is-link" value="Submit Question" />
+                <input type="submit" name="submit" class="button is-link" value="Update Question" />
             </div>
         </div>
     </form>
@@ -61,7 +61,7 @@
 
         function handleQuestionSubmit() {
             document.getElementById('quill-question-content').value = JSON.stringify(questionQuill.getContents());
-            document.getElementById('quill-question-truncated-content').value = questionQuill.getText().slice(0, 167) + "...";
+            document.getElementById('quill-question-truncated-content').value = slicePostContent(questionQuill.getText()) + "...";
             document.getElementById('tags').value = JSON.stringify(tagify.value);
         }
     </script>
