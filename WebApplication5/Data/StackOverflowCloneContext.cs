@@ -20,6 +20,10 @@ namespace WebApplication5.Data
             modelBuilder.Entity<Question>()
                 .HasMany(e => e.Tags)
                 .WithMany(e => e.Questions);
+            /*
+            modelBuilder.Entity<Profile>()
+                .HasIndex(p => p.Email)
+                .IsUnique();*/
         }
     }
 }
