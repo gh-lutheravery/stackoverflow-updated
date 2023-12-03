@@ -61,7 +61,7 @@ namespace WebApplication5.Controllers.BusinessControllers
 
         public Profile? ValidateLogin(LoginViewModel vm, PasswordHasher<Profile> hasher)
         {
-            Profile? profile = _contextService.context.Profile.Find(vm.Email);
+            Profile? profile = _contextService.context.Profile.Where(p => p.Email == vm.Email).FirstOrDefault();
 
             if (profile == null)
                 return null;
