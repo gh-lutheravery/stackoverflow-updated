@@ -31,7 +31,7 @@ namespace WebApplication5.Controllers.BusinessControllers
         public HomeViewModel PopulateHomeViewModel(int pageNumber, string? sortBy, string? filterBy)
         {
             HomeViewModel vm = new HomeViewModel();
-            var allQuestions = _context.GetAllQuestions(true).ToList();
+            var allQuestions = _context.GetAllQuestions(true);
 
             if (!sortBy.IsNullOrEmpty() && _sortTypes.Contains(sortBy)) 
             {
@@ -56,54 +56,31 @@ namespace WebApplication5.Controllers.BusinessControllers
         }
 
 
-        private List<Question> SortQuestions(List<Question> questions, string sortBy)
-        {
-            var newQuestions = new List<Question>();
-            
+        private IQueryable<Question> SortQuestions(IQueryable<Question> questions, string sortBy)
+        {            
             switch (sortBy)
             {
                 case "Newest":
-                    newQuestions = questions.OrderByDescending(q => q.DateCreated).ToList();
-                    return newQuestions;
-
+                    return questions.OrderByDescending(q => q.DateCreated);
                 case "Unanswered":
-                    newQuestions = questions.OrderBy(q => q.AnswerCount).ToList();
-                    return newQuestions;
-
+                    return questions.OrderBy(q => q.AnswerCount);
                 default:
-                    break;
+                    return questions;
             }
-            return questions;
         }
 
 
-        private List<Question> FilterQuestions(List<Question> oldQuestions, string filterBy)
+        private IQueryable<Question> FilterQuestions(IQueryable<Question> oldQuestions, string filterBy)
         {
-            var newQuestions = new List<Question>();
             switch (filterBy)
             {
                 case "NoAnswers":
-                    foreach (var question in oldQuestions)
-                    {
-                        if (question.AnswerCount == 0)
-                            newQuestions.Add(question);
-                    }
-
-                    return newQuestions;
-
+                    return oldQuestions.Include(q => q.AnswerCount == 0);
                 case "NoAcceptedAnswers":
-                    foreach (var question in oldQuestions)
-                    {
-                        if (question.AcceptedAnswerId == 0 || question.AcceptedAnswerId == null)
-                            newQuestions.Add(question);
-                    }
-
-                    return newQuestions;
-
+                    return oldQuestions.Include(q => q.AcceptedAnswerId == 0);
                 default:
-                    break;
+                    return oldQuestions;
             }
-            return oldQuestions;
         }
 
         private List<string> RandomizeTags(List<string> tags)
@@ -128,7 +105,7 @@ namespace WebApplication5.Controllers.BusinessControllers
             if (!sortBy.IsNullOrEmpty())
             {
                 IPagedList<Question> pagedList;
-                pagedList = SortQuestions(allQuestions, sortBy).ToPagedList(pageNumber, _pageSize);
+                pagedList = SortQuestions(allQuestions.AsQueryable(), sortBy).ToPagedList(pageNumber, _pageSize);
                 vm.Questions = pagedList;
             }
             else 
