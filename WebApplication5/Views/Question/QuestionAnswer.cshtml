@@ -214,13 +214,17 @@
 
         // changes html value and color on voting, and sends request to api
         function handleQuestionVote($element, colorClass, incrementBy) {
+            const quesNames = [
+                "#ques-up-vote",
+                "#ques-down-vote"
+            ];
+
             let $voteCountElement = $('#ques-vote-count');
             const newincrementBy = incrementQuestionVoteCount($voteCountElement, incrementBy);
 
+            resetBtnIfAlreadySet($element, $voteCountElement, quesNames, newincrementBy);
+
             $element.toggleClass(colorClass);
-
-            //const reqObj = { id: @Model.Question.Id, incrementBy: newincrementBy };
-
             $.ajax({
                 url: '@Url.Action("UpdateVote", "Question")',
                 method: 'POST',
@@ -230,7 +234,45 @@
                     console.log('Error voting post.');
                 }
             });
-            
+
+        }
+        // make sets lists
+        function resetBtnIfAlreadySet($currentElement, $voteCountElement, quesNameSet, newincrementBy) {
+            const currentName = [$currentElement.attr('id')];
+
+            const oppositeId = getOpposite(quesNameSet, currentName);
+
+            const strippedOppositeId = oppositeId.replace('#', '');
+            var oppositeclassList = document.getElementById(strippedOppositeId).className.split(/\s+/);
+
+            let findFunc = (bgClass) => {
+                // startsWith doesn't work with findIndex, so use substring
+                if (bgClass.substring(0, 3) == 'bg-')
+                    return true;
+                return false;
+            }
+
+            const resultIndex = oppositeclassList.findIndex(findFunc);
+
+            if (resultIndex != -1) {
+                // reset that element
+                const color = oppositeclassList[resultIndex];
+                $(oppositeId).toggleClass(color);
+
+                const currentVoteCount = Number($voteCountElement.text());
+                const resetVoteCount = newincrementBy * -1;
+
+                $voteCountElement.text(
+                    String(currentVoteCount + resetVoteCount)
+                )
+            }
+        }
+
+        function getOpposite(listA, listB) {
+            if (listA[0] == listB[0])
+                return listA[1];
+            else
+                return listA[0];
         }
 
         function incrementQuestionVoteCount($element, incrementBy) {
@@ -246,6 +288,7 @@
             $element.text(
                 String(currentVoteCount + incrementBy)
             );
+
             return incrementBy;
         }
     </script>
