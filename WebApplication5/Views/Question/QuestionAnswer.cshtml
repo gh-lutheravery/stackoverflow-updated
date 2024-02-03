@@ -212,19 +212,26 @@
             handleQuestionVote($(this), "bg-downvote", -1);
         });
 
+        var ORIGINAL_QUESTION_VOTECOUNT = @Model.Question.VoteCount;
+
         // changes html value and color on voting, and sends request to api
         function handleQuestionVote($element, colorClass, incrementBy) {
             const quesNames = [
-                "#ques-up-vote",
-                "#ques-down-vote"
+                "ques-up-vote",
+                "ques-down-vote"
             ];
 
             let $voteCountElement = $('#ques-vote-count');
-            const newincrementBy = incrementQuestionVoteCount($voteCountElement, incrementBy);
+            
+            const newincrementBy = validateIncrementBy($voteCountElement, incrementBy);
+            resetVoteIfAlreadySet($element, $voteCountElement, quesNames, newincrementBy);
 
-            resetBtnIfAlreadySet($element, $voteCountElement, quesNames, newincrementBy);
-
+            const currentVoteCount = Number($voteCountElement.text())
+            $voteCountElement.text(
+                String(currentVoteCount + newincrementBy)
+            );
             $element.toggleClass(colorClass);
+
             $.ajax({
                 url: '@Url.Action("UpdateVote", "Question")',
                 method: 'POST',
@@ -236,11 +243,11 @@
             });
 
         }
-        // make sets lists
-        function resetBtnIfAlreadySet($currentElement, $voteCountElement, quesNameSet, newincrementBy) {
+
+        function resetVoteIfAlreadySet($currentElement, $voteCountElement, quesNameSet, newincrementBy) {
             const currentName = [$currentElement.attr('id')];
 
-            const oppositeId = getOpposite(quesNameSet, currentName);
+            const oppositeId = getOppositeIdWithPoundSign(quesNameSet, currentName);
 
             const strippedOppositeId = oppositeId.replace('#', '');
             var oppositeclassList = document.getElementById(strippedOppositeId).className.split(/\s+/);
@@ -258,36 +265,24 @@
                 // reset that element
                 const color = oppositeclassList[resultIndex];
                 $(oppositeId).toggleClass(color);
-
-                const currentVoteCount = Number($voteCountElement.text());
-                const resetVoteCount = newincrementBy * -1;
-
-                $voteCountElement.text(
-                    String(currentVoteCount + resetVoteCount)
-                )
             }
         }
 
-        function getOpposite(listA, listB) {
+        function getOppositeIdWithPoundSign(listA, listB) {
             if (listA[0] == listB[0])
-                return listA[1];
+                return "#" + listA[1];
             else
-                return listA[0];
+                return "#" + listA[0];
         }
 
-        function incrementQuestionVoteCount($element, incrementBy) {
-            const originalVoteCount = @Model.Question.VoteCount;
+        function validateIncrementBy($element, incrementBy) {
             let currentVoteCount = Number($element.text());
 
-            if (currentVoteCount + incrementBy > originalVoteCount + 1)
+            if (currentVoteCount + incrementBy > ORIGINAL_QUESTION_VOTECOUNT + 1)
                 incrementBy = -1;
 
-            else if (currentVoteCount + incrementBy < originalVoteCount - 1)
+            else if (currentVoteCount + incrementBy < ORIGINAL_QUESTION_VOTECOUNT - 1)
                 incrementBy = 1;
-
-            $element.text(
-                String(currentVoteCount + incrementBy)
-            );
 
             return incrementBy;
         }
