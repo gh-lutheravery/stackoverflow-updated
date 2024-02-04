@@ -13,6 +13,11 @@ namespace WebApplication5.Controllers.WebControllers
             _businessController = businessController;
         }
 
+        public ActionResult LandingPage() 
+        {
+            return View();
+        }
+
         public ActionResult Index(int pageNumber = 1, string sortBy = "", string filterBy = "")
         {
             HomeViewModel vm = _businessController.PopulateHomeViewModel(pageNumber, sortBy, filterBy);
