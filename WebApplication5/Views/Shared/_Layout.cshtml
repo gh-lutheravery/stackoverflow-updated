@@ -66,10 +66,10 @@
     </header>
 
     @await RenderSectionAsync("OutsideContainer", required: false)
-    <div class="container p-3">
-        <main role="main">
+    <div id="soc-main-container">
+        <div id="soc-inner-container" class="container p-3">
             @RenderBody()
-        </main>
+        </div>
     </div>
 
     <footer class="border-top gr-footer text-muted">
