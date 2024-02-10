@@ -2,7 +2,7 @@
 @model LoginViewModel
 
 
-<div class="content-section box ml-auto mr-auto mt-6 is-justify-content-center" style="width: 50%">
+<div id="login-container" class="content-section box ml-auto mr-auto mt-6 is-justify-content-center">
     <h1 class="title is-3">Login</h1>
     <form asp-controller="Profile" asp-action="Login">
         @Html.AntiForgeryToken()
