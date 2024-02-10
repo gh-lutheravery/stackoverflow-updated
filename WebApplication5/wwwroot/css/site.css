@@ -10,11 +10,10 @@ html {
 
 html {
   position: relative;
-  min-height: 100%;
 }
 
 body {
-    margin-bottom: 60px;
+    height: 100vh;
     background-color: ghostwhite;
 }
 .media-rows {
@@ -50,9 +49,9 @@ body {
 }
 
 .gr-footer {
-    margin-top: 100px;
+    margin-top: 0.3rem;
     text-align: center;
-    margin-bottom: 100px;
+    margin-bottom: 0.3rem;
 }
 
     .gr-footer a::after {
